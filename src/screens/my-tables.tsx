@@ -58,8 +58,8 @@ function MyTables() {
                                             <TableRow>
                                                 <TableHead>Product</TableHead>
                                                 <TableHead>Category</TableHead>
-                                                <TableHead className="text-right">Price ($)</TableHead>
-                                                <TableHead className="text-right">Stock</TableHead>
+                                                <TableHead>Price ($)</TableHead>
+                                                <TableHead>Stock</TableHead>
                                                 <Button className="ml-2"><PlusIcon></PlusIcon></Button>
                                             </TableRow>
                                         </TableHeader>
@@ -83,7 +83,6 @@ function MyTables() {
                                                                 value
                                                             )}
                                                         </TableCell>
-
                                                     ))}
                                                 </TableRow>
                                             ))}
