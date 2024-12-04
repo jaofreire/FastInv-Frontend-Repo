@@ -12,38 +12,68 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ClipboardPaste, PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 
-type DynamicInventoryItem = Record<string, any>
+// type DynamicInventoryItem = {[key: string]: string[]}
 
 function MyTables() {
-    const [editingCell, setEditingCell] = useState({ row: null, column: null });
+    const [inventory, setInventory] = useState<Map<string, string[]>>(
+        new Map<string, string[]>([
+            ["Produtos", ["Notbook", "Desktop"]],
+            ["Marcas", ["Samsung", "Lenovo"]]
+        ])
+    );
 
-    const handleEdit = (row: any, column: any) => {
+    const tableHeaders = Array.from(inventory.keys());
+    const tableRows = useMemo(() => Array.from(inventory.values()), [inventory])
+    const maxRows = Math.max(...tableRows.map((values) => values.length + 1))
+
+    const [editingCell, setEditingCell] = useState({ row: null, column: null });
+    const [editingColumn, setEditingColumn] = useState({ column: null })
+
+
+    function handleEdit(row: any, column: any) {
         setEditingCell({ row, column });
     };
 
-    const [inventory2, setInventory] = useState<DynamicInventoryItem[]>([
-        { product: "Product 1", category: "Category 1", price: 50, stock: 10 },
-        { product: "Product 2", category: "Category 2", price: 100, stock: 20 },
-    ]);
+    function handleEditColumn(column: any) {
+        setEditingColumn({ column })
+    }
 
-    const handleValueChange = (rowIndex: number, key: string, value: any) => {
-        const updatedInventory = [...inventory2];
-        updatedInventory[rowIndex][key] = value;
+    function handleColumnValueChange(oldColumn: string, newColumn: string) {
+        //No contexto de mudar o nome da coluna a melhor forma é criando um Array por causa da utilização do splice para substituir elementos existentes
+        const updatedInventory = Array.from(inventory);
+        const oldColumnIndex = updatedInventory.findIndex(([column]) => column === oldColumn);
+        const oldColumnData = updatedInventory[oldColumnIndex][1];
+
+        updatedInventory.splice(oldColumnIndex, 1, [newColumn, oldColumnData]);
+
+        const inventoryMap = new Map(updatedInventory);
+        setInventory(inventoryMap);
+    }
+
+    function handleCellValueChange(rowIndex: number, column: string, value: string) {
+        const updatedInventory = new Map(inventory);
+        const columnData = updatedInventory.get(column);
+
+        if (columnData) {
+            columnData[rowIndex] = value;
+            updatedInventory.set(column, columnData);
+        }
         setInventory(updatedInventory);
     };
 
-    const handleBlur = () => {
+    function handleBlur() {
         setEditingCell({ row: null, column: null });
+        setEditingColumn({ column: null });
     };
 
 
     return (
         <>
             <SideBar />
-            <div className="w-screen h-screen">
+            <div className="w-screen h-screen bg-gray-100">
                 <main className="w-full h-full pl-64">
                     <div className="w-full h-full flex p-6">
                         <Card className="w-full">
@@ -56,34 +86,62 @@ function MyTables() {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead>Product</TableHead>
-                                                <TableHead>Category</TableHead>
-                                                <TableHead>Price ($)</TableHead>
-                                                <TableHead>Stock</TableHead>
+                                                {tableHeaders.map((columnName, columnIndex) => (
+                                                    <TableHead className="cursor-pointer"
+                                                        key={columnIndex}
+                                                        onClick={() => handleEditColumn(columnIndex)}
+                                                    >
+                                                        {editingColumn.column === columnIndex
+                                                            ?
+                                                            (
+
+                                                                <Input className="w-full border border-gray-300 rounded px-2 py-1"
+                                                                    type="text"
+                                                                    value={columnName}
+                                                                    onChange={(e) => handleColumnValueChange(columnName, e.target.value)}
+                                                                    onBlur={handleBlur}
+                                                                    autoFocus
+                                                                />
+                                                            )
+                                                            :
+                                                            (
+                                                                columnName
+
+                                                            )}
+
+                                                    </TableHead>
+                                                ))}
                                                 <Button className="ml-2"><PlusIcon></PlusIcon></Button>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {inventory2.map((item, index) => (
-                                                <TableRow key={index}>
-                                                    {Object.entries(item).map(([key, value], columnIndex) => (
+                                            {Array.from({ length: maxRows }).map((_, rowIndex) => (
+                                                <TableRow key={rowIndex}>
+                                                    {tableHeaders.map((column, columnIndex) => (
                                                         <TableCell className="font-medium cursor-pointer"
                                                             key={columnIndex}
-                                                            onClick={() => handleEdit(index, key)}
+                                                            onClick={() => handleEdit(rowIndex, column)}
                                                         >
-                                                            {editingCell.row === index && editingCell.column === key ? (
-                                                                <Input className="w-full border border-gray-300 rounded px-2 py-1"
-                                                                    type="text"
-                                                                    value={value}
-                                                                    onChange={(e) => handleValueChange(index, key, e.target.value)}
-                                                                    onBlur={handleBlur}
-                                                                    autoFocus
-                                                                />
-                                                            ) : (
-                                                                value
-                                                            )}
+                                                            {editingCell.row === rowIndex && editingCell.column === column
+                                                                ?
+                                                                (
+                                                                    <Input className="w-full border border-gray-300 rounded px-2 py-1"
+                                                                        type="text"
+                                                                        value={inventory.get(column)?.at(rowIndex)}
+                                                                        onChange={(e) => handleCellValueChange(rowIndex, column, e.target.value)}
+                                                                        onBlur={handleBlur}
+                                                                        autoFocus
+                                                                    />
+                                                                )
+                                                                :
+                                                                (
+                                                                    inventory.get(column)?.at(rowIndex)
+                                                                )
+                                                            }
+
                                                         </TableCell>
                                                     ))}
+
                                                 </TableRow>
                                             ))}
                                         </TableBody>
