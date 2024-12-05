@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -11,6 +13,7 @@ const formSchema = z.object({
 })
 
 function SignIn() {
+    const navigator = useNavigate()
 
     const formControl = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -22,52 +25,56 @@ function SignIn() {
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log("Login válido!!");
+        navigator('/main-page');
     }
 
     return (
         <>
-            <div className="flex items-center justify-center h-screen w-screen bg-orange-400">
-                <Form {...formControl}>
-                    <form
-                        onSubmit={formControl.handleSubmit(onSubmit)}
-                        className="space-y-8 bg-white p-6 rounded-lg shadow-md w-96 h-96"
-                    >
-                        <div className="flex justify-center">
-                            <h6 className="font-bold text-black text-lg text-center w-40 h-10">
-                                Bem vindo ao <span className="text-orange-600 text-2xl font-extrabold">FastInv</span>
-                            </h6>
+            <div className=" h-screen w-screen flex items-center justify-center bg-[#FF8B3D]">
+                <Card className="w-full max-w-md">
+                    <CardContent className="pt-6">
+                        <div className="text-center mb-6">
+                            <h1 className="text-2xl font-semibold">Bem vindo ao</h1>
+                            <h2 className="text-[#FF8B3D] text-2xl font-bold">FastInv</h2>
                         </div>
-                        <FormField
-                            control={formControl.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-orange-500 font-bold">Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Seu email" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={formControl.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-orange-500 font-bold">Senha</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Sua senha" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="flex justify-center">
-                            <Button className="bg-orange-500 font-semibold w-full" type="submit">Entrar</Button>
-                        </div>
-                    </form>
-                </Form>
+                        <Form {...formControl}>
+                            <form onSubmit={formControl.handleSubmit(onSubmit)} className="space-y-6">
+                                <FormField
+                                    control={formControl.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">Email</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Seu email" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={formControl.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">Senha</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Sua senha" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-[#FF8B3D] hover:bg-[#e67d35]"
+                                >
+                                    Entrar
+                                </Button>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
             </div>
         </>
     )
