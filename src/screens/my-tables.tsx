@@ -11,9 +11,10 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClipboardPaste, PlusIcon } from "lucide-react";
+import { ClipboardPaste, Ellipsis, MoreVertical, PlusIcon, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import ColumnOptions from "@/components/inventory-table/column-options";
 
 // type DynamicInventoryItem = {[key: string]: string[]}
 
@@ -76,6 +77,14 @@ function MyTables() {
         setInventory(updatedInventory);
     };
 
+    function deleteColumn(column: string) {
+        const updatedInventory = new Map(inventory);
+        updatedInventory.delete(column);
+        //Adicionar Dialog para avisar que os itens dessa coluna serão excluídas
+
+        setInventory(updatedInventory);
+    }
+
 
     return (
         <>
@@ -94,28 +103,36 @@ function MyTables() {
                                         <TableHeader>
                                             <TableRow>
                                                 {tableHeaders.map((columnName, columnIndex) => (
-                                                    <TableHead className="cursor-pointer"
-                                                        key={columnIndex}
-                                                        onClick={() => handleEditColumn(columnIndex)}
-                                                    >
-                                                        {editingColumn.column === columnIndex
-                                                            ?
-                                                            (
+                                                    <>
 
-                                                                <Input className="w-full border border-gray-300 rounded px-2 py-1"
-                                                                    type="text"
-                                                                    value={columnName}
-                                                                    onChange={(e) => handleColumnValueChange(columnName, e.target.value)}
-                                                                    onBlur={handleBlur}
-                                                                    autoFocus
+                                                        <TableHead className="cursor-pointer h-16 text-base"
+                                                            key={columnIndex}
+                                                            onClick={() => handleEditColumn(columnIndex)}
+                                                        >
+                                                            <div className="flex min-w-fit">
+                                                                <ColumnOptions
+                                                                    onClickDeleteButton={() => deleteColumn(columnName)}
                                                                 />
-                                                            )
-                                                            :
-                                                            (
-                                                                columnName
-                                                            )}
+                                                            </div>
+                                                            {editingColumn.column === columnIndex
+                                                                ?
+                                                                (
 
-                                                    </TableHead>
+                                                                    <Input className="w-full border border-gray-300 rounded px-2 py-1"
+                                                                        type="text"
+                                                                        value={columnName}
+                                                                        onChange={(e) => handleColumnValueChange(columnName, e.target.value)}
+                                                                        onBlur={handleBlur}
+                                                                        autoFocus
+                                                                    />
+                                                                )
+                                                                :
+                                                                (
+                                                                    columnName
+                                                                )}
+
+                                                        </TableHead>
+                                                    </>
                                                 ))}
                                                 <Button className="ml-2 w-10" onClick={addNewColumn}><PlusIcon></PlusIcon></Button>
                                             </TableRow>
