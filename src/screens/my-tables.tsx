@@ -25,8 +25,8 @@ function MyTables() {
         ])
     );
 
-    const tableHeaders = Array.from(inventory.keys());
-    const tableRows = useMemo(() => Array.from(inventory.values()), [inventory])
+    const tableHeaders = useMemo(() => Array.from(inventory.keys()), [inventory]);
+    const tableRows = useMemo(() => Array.from(inventory.values()), [inventory]);
     const maxRows = Math.max(...tableRows.map((values) => values.length + 1))
 
     const [editingCell, setEditingCell] = useState({ row: null, column: null });
@@ -39,7 +39,7 @@ function MyTables() {
 
     function handleEditColumn(column: any) {
         setEditingColumn({ column })
-    }
+    };
 
     function handleColumnValueChange(oldColumn: string, newColumn: string) {
         //No contexto de mudar o nome da coluna a melhor forma é criando um Array por causa da utilização do splice para substituir elementos existentes
@@ -51,7 +51,7 @@ function MyTables() {
 
         const inventoryMap = new Map(updatedInventory);
         setInventory(inventoryMap);
-    }
+    };
 
     function handleCellValueChange(rowIndex: number, column: string, value: string) {
         const updatedInventory = new Map(inventory);
@@ -67,6 +67,13 @@ function MyTables() {
     function handleBlur() {
         setEditingCell({ row: null, column: null });
         setEditingColumn({ column: null });
+    };
+
+    function addNewColumn() {
+        const updatedInventory = new Map(inventory);
+        updatedInventory.set("Coluna nova..", []);
+
+        setInventory(updatedInventory);
     };
 
 
@@ -106,12 +113,11 @@ function MyTables() {
                                                             :
                                                             (
                                                                 columnName
-
                                                             )}
 
                                                     </TableHead>
                                                 ))}
-                                                <Button className="ml-2"><PlusIcon></PlusIcon></Button>
+                                                <Button className="ml-2 w-10" onClick={addNewColumn}><PlusIcon></PlusIcon></Button>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
