@@ -11,12 +11,10 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClipboardPaste, Ellipsis, MoreVertical, PlusIcon, Trash2 } from "lucide-react";
+import { ClipboardPaste, FilterX, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
-
-// type DynamicInventoryItem = {[key: string]: string[]}
 
 function MyTables() {
     const [inventory, setInventory] = useState<Map<string, string[]>>(
@@ -26,14 +24,23 @@ function MyTables() {
         ])
     );
 
+    const [isFilterMode, setIsFilterMode] = useState(false);
+    const [filteredItens, setFilteredItens] = useState<Map<string, string[]>>(
+        new Map<string, string[]>([
+        ])
+    );
+
     const tableHeaders = useMemo(() => Array.from(inventory.keys()), [inventory]);
     const tableRows = useMemo(() => Array.from(inventory.values()), [inventory]);
     const maxRows = Math.max(...tableRows.map((values) => values.length + 1))
 
+    //Irá ser mapeado na tela se isFilterMode for true
+    const filteredTableHeaders = useMemo(() => Array.from(filteredItens?.keys()!), [filteredItens]);
+
     const [editingCell, setEditingCell] = useState({ row: null, column: null });
     const [editingColumn, setEditingColumn] = useState({ column: null })
 
-
+    //#region Manipuladores de alterações na tabela
     function handleEdit(row: any, column: any) {
         setEditingCell({ row, column });
     };
@@ -44,14 +51,22 @@ function MyTables() {
 
     function handleColumnValueChange(oldColumn: string, newColumn: string) {
         //No contexto de mudar o nome da coluna a melhor forma é criando um Array por causa da utilização do splice para substituir elementos existentes
-        const updatedInventory = Array.from(inventory);
+        const inventoryToUpdate = isFilterMode ? filteredItens : inventory
+        const updatedInventory = Array.from(inventoryToUpdate);
         const oldColumnIndex = updatedInventory.findIndex(([column]) => column === oldColumn);
         const oldColumnData = updatedInventory[oldColumnIndex][1];
 
         updatedInventory.splice(oldColumnIndex, 1, [newColumn, oldColumnData]);
 
         const inventoryMap = new Map(updatedInventory);
-        setInventory(inventoryMap);
+        //Adicionar condição de se isFilterMode alterar filteredItens
+        if(isFilterMode){
+            setFilteredItens(inventoryMap);
+            // setInventory()
+        }
+        else{
+            setInventory(inventoryMap);
+        }
     };
 
     function handleCellValueChange(rowIndex: number, column: string, value: string) {
@@ -66,6 +81,8 @@ function MyTables() {
     };
 
     function handleBlur() {
+        //Problema quando estou alterando o nome da coluna da tabela caso tenha uma igual a tabela é excluída mesmo ainda sendo alterada
+        //Solução: alterar o nome da coluna apenas quando desfocar do input
         setEditingCell({ row: null, column: null });
         setEditingColumn({ column: null });
     };
@@ -85,6 +102,31 @@ function MyTables() {
         setInventory(updatedInventory);
     }
 
+    //#endregion
+
+    //#region Manipuladores de fitragem na tabela
+
+    function handleFilterByName(filteredColumn: string, filterValue: string) {
+        const filteredInventory = new Map();
+        const columnData = inventory.get(filteredColumn);
+
+        if (columnData) {
+            const filteredColumnData = columnData.filter(value => value.includes(filterValue));
+            console.log(filteredColumnData);
+
+            filteredInventory.set(filteredColumn, filteredColumnData);
+        }
+
+        setFilteredItens(filteredInventory);
+        setIsFilterMode(true);
+        console.log(filteredItens);
+    }
+
+    function removeFilters(){
+        setIsFilterMode(false);
+    }
+
+    //#endregion
 
     return (
         <>
@@ -94,15 +136,16 @@ function MyTables() {
                     <div className="w-full h-full flex p-6">
                         <Card className="w-full">
                             <div className="flex flex-col h-full">
-                                <CardHeader className="mb-4">
+                                <CardHeader className="mb-4 h-28">
                                     <CardTitle className="text-2xl font-bold">Inventário de notbooks</CardTitle>
                                     <Button className="w-40 h-5 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><ClipboardPaste />Exportar excel</Button>
+                                    { isFilterMode && <Button className="w-40 h-5 bg-red-500 opacity-90 text-white font-medium rounded-sm hover:opacity-100 hover:bg-red-600" onClick={removeFilters}><FilterX/>Remover filtros</Button> }     
                                 </CardHeader>
                                 <CardContent className="overflow-x-auto">
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                {tableHeaders.map((columnName, columnIndex) => (
+                                                {(isFilterMode ? filteredTableHeaders : tableHeaders).map((columnName, columnIndex) => (
                                                     <>
 
                                                         <TableHead className="cursor-pointer h-16 text-base"
@@ -112,7 +155,9 @@ function MyTables() {
                                                             <div className="flex min-w-fit">
                                                                 <ColumnOptions
                                                                     onClickDeleteButton={() => deleteColumn(columnName)}
-                                                                />
+                                                                    onChangeFilterByName={(_, filterValue) => handleFilterByName(columnName, filterValue)}
+                                                                >
+                                                                </ColumnOptions>
                                                             </div>
                                                             {editingColumn.column === columnIndex
                                                                 ?
@@ -140,7 +185,7 @@ function MyTables() {
                                         <TableBody>
                                             {Array.from({ length: maxRows }).map((_, rowIndex) => (
                                                 <TableRow key={rowIndex}>
-                                                    {tableHeaders.map((column, columnIndex) => (
+                                                    {(isFilterMode ? filteredTableHeaders : tableHeaders).map((column, columnIndex) => (
                                                         <TableCell className="font-medium cursor-pointer"
                                                             key={columnIndex}
                                                             onClick={() => handleEdit(rowIndex, column)}
@@ -150,7 +195,7 @@ function MyTables() {
                                                                 (
                                                                     <Input className="w-full border border-gray-300 rounded px-2 py-1"
                                                                         type="text"
-                                                                        value={inventory.get(column)?.at(rowIndex)}
+                                                                        value={isFilterMode ? filteredItens.get(column)?.at(rowIndex) : inventory.get(column)?.at(rowIndex)}
                                                                         onChange={(e) => handleCellValueChange(rowIndex, column, e.target.value)}
                                                                         onBlur={handleBlur}
                                                                         autoFocus
@@ -158,7 +203,7 @@ function MyTables() {
                                                                 )
                                                                 :
                                                                 (
-                                                                    inventory.get(column)?.at(rowIndex)
+                                                                    isFilterMode ? filteredItens.get(column)?.at(rowIndex) : inventory.get(column)?.at(rowIndex)
                                                                 )
                                                             }
 
