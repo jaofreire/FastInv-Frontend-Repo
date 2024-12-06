@@ -15,6 +15,7 @@ import { ClipboardPaste, FilterX, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
+import { map } from "zod";
 
 function MyTables() {
     const [inventory, setInventory] = useState<Map<string, string[]>>(
@@ -53,31 +54,61 @@ function MyTables() {
         //No contexto de mudar o nome da coluna a melhor forma é criando um Array por causa da utilização do splice para substituir elementos existentes
         const inventoryToUpdate = isFilterMode ? filteredItens : inventory
         const updatedInventory = Array.from(inventoryToUpdate);
+
         const oldColumnIndex = updatedInventory.findIndex(([column]) => column === oldColumn);
         const oldColumnData = updatedInventory[oldColumnIndex][1];
 
         updatedInventory.splice(oldColumnIndex, 1, [newColumn, oldColumnData]);
 
         const inventoryMap = new Map(updatedInventory);
-        //Adicionar condição de se isFilterMode alterar filteredItens
-        if(isFilterMode){
+
+        if (isFilterMode) {
             setFilteredItens(inventoryMap);
-            // setInventory()
+
+            const inventoryArray = Array.from(inventory);
+
+            const inventoryOldColumnIndex = inventoryArray.findIndex(([column]) => column === oldColumn);
+            const inventoryOldColumnData = inventoryArray[inventoryOldColumnIndex][1];
+
+            inventoryArray.splice(inventoryOldColumnIndex, 1, [newColumn, inventoryOldColumnData]);
+
+            const map = new Map(inventoryArray);
+            setInventory(map);
         }
-        else{
+        else {
             setInventory(inventoryMap);
         }
     };
 
     function handleCellValueChange(rowIndex: number, column: string, value: string) {
-        const updatedInventory = new Map(inventory);
+
+        const inventoryToUpdate = isFilterMode ? filteredItens : inventory;
+        const updatedInventory = new Map(inventoryToUpdate);
+        
         const columnData = updatedInventory.get(column);
 
         if (columnData) {
             columnData[rowIndex] = value;
             updatedInventory.set(column, columnData);
         }
-        setInventory(updatedInventory);
+
+        if(isFilterMode){
+            setFilteredItens(updatedInventory);
+
+            const updatedInventoryMap = new Map(inventory);
+            const inventoryColumnData = updatedInventoryMap.get(column);
+
+            if(inventoryColumnData){
+                inventoryColumnData[rowIndex] = value;
+                updatedInventoryMap.set(column, inventoryColumnData);
+            }
+
+            setInventory(updatedInventoryMap);
+        }
+        else{
+            setInventory(updatedInventory);
+        }
+
     };
 
     function handleBlur() {
@@ -122,7 +153,7 @@ function MyTables() {
         console.log(filteredItens);
     }
 
-    function removeFilters(){
+    function removeFilters() {
         setIsFilterMode(false);
     }
 
@@ -139,7 +170,7 @@ function MyTables() {
                                 <CardHeader className="mb-4 h-28">
                                     <CardTitle className="text-2xl font-bold">Inventário de notbooks</CardTitle>
                                     <Button className="w-40 h-5 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><ClipboardPaste />Exportar excel</Button>
-                                    { isFilterMode && <Button className="w-40 h-5 bg-red-500 opacity-90 text-white font-medium rounded-sm hover:opacity-100 hover:bg-red-600" onClick={removeFilters}><FilterX/>Remover filtros</Button> }     
+                                    {isFilterMode && <Button className="w-40 h-5 bg-red-500 opacity-90 text-white font-medium rounded-sm hover:opacity-100 hover:bg-red-600" onClick={removeFilters}><FilterX />Remover filtros</Button>}
                                 </CardHeader>
                                 <CardContent className="overflow-x-auto">
                                     <Table>
@@ -156,8 +187,7 @@ function MyTables() {
                                                                 <ColumnOptions
                                                                     onClickDeleteButton={() => deleteColumn(columnName)}
                                                                     onChangeFilterByName={(_, filterValue) => handleFilterByName(columnName, filterValue)}
-                                                                >
-                                                                </ColumnOptions>
+                                                                />
                                                             </div>
                                                             {editingColumn.column === columnIndex
                                                                 ?
