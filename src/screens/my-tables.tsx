@@ -15,13 +15,20 @@ import { ClipboardPaste, FilterX, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
-import { map } from "zod";
 
 function MyTables() {
     const [inventory, setInventory] = useState<Map<string, string[]>>(
         new Map<string, string[]>([
-            ["Produtos", ["Notbook", "Desktop", "Netbook", "Notbook"]],
-            ["Marcas", ["Samsung", "Lenovo"]]
+            ["Marcas", Array.from({ length: 1000 }, (_, i) => `Marca${i + 1}`)],
+            ["Produtos", Array.from({ length: 1000 }, (_, i) => `Produto${i + 1}`)],
+            ["Cores", Array.from({ length: 500 }, (_, i) => `Cor${i + 1}`)],
+            // ["Países", Array.from({ length: 200 }, (_, i) => `País${i + 1}`)],
+            // ["Categorias", Array.from({ length: 300 }, (_, i) => `Categoria${i + 1}`)],
+            // ["Lojas", Array.from({ length: 150 }, (_, i) => `Loja${i + 1}`)],
+            // ["Departamentos", Array.from({ length: 100 }, (_, i) => `Departamento${i + 1}`)],
+            // ["Modelos", Array.from({ length: 700 }, (_, i) => `Modelo${i + 1}`)],
+            // ["Fornecedores", Array.from({ length: 250 }, (_, i) => `Fornecedor${i + 1}`)],
+            // ["Séries", Array.from({ length: 400 }, (_, i) => `Série${i + 1}`)]
         ])
     );
 
@@ -79,13 +86,13 @@ function MyTables() {
             setInventory(inventoryMap);
         }
     };
- 
+
     function handleCellValueChange(rowIndex: number, column: string, value: string) {
 
         const inventoryToUpdate = isFilterMode ? filteredItens : inventory;
         const updatedInventory = new Map(inventoryToUpdate);
         const indexMap = generateIndexMap(filteredItens, inventory);
-        
+
         const columnData = updatedInventory.get(column);
 
         if (columnData) {
@@ -93,29 +100,29 @@ function MyTables() {
             updatedInventory.set(column, columnData);
         }
 
-        if(isFilterMode){
+        if (isFilterMode) {
             setFilteredItens(updatedInventory);
 
             const updatedInventoryMap = new Map(inventory);
             const inventoryColumnData = updatedInventoryMap.get(column);
-            
+
             console.log(indexMap);
             const originalIndex = indexMap.get(column)?.[rowIndex];
-            
-            if(originalIndex === undefined){
+
+            if (originalIndex === undefined) {
                 console.log("Ocorreu um erro ao buscar index na coluna original");
                 return;
             }
             console.log("Original Index que será atualizado: " + originalIndex);
 
-            if(inventoryColumnData){
+            if (inventoryColumnData) {
                 inventoryColumnData[originalIndex!] = value;
                 updatedInventoryMap.set(column, inventoryColumnData);
             }
 
             setInventory(updatedInventoryMap);
         }
-        else{
+        else {
             setInventory(updatedInventory);
         }
 
@@ -125,14 +132,14 @@ function MyTables() {
         filteredMap: Map<string, string[]>,
         originalMap: Map<string, string[]>
 
-    ) : Map<string, number[]>{
+    ): Map<string, number[]> {
         //Mapeamento de index que será retornado
         const indexMap = new Map<string, number[]>();
 
         filteredMap.forEach((filteredValues, column) => {
             const originalColumnData = originalMap.get(column)
 
-            if(!originalColumnData){
+            if (!originalColumnData) {
                 indexMap.set(column, []);
                 return;
             }
@@ -144,11 +151,11 @@ function MyTables() {
                 //Busca o index do valor na lista original verificando se o valor é igual e se o index ja não foi utilizado, para evitar conflitos de duplicação de valores
                 const originalIndex = originalColumnData.findIndex((v, index) => v === value && !usedIndices.has(index));
 
-                if(originalIndex !== -1){
+                if (originalIndex !== -1) {
                     columnIndexMap.push(originalIndex);
                     usedIndices.add(originalIndex);
                 }
-                else{
+                else {
                     columnIndexMap.push(-1);
                 }
 
@@ -159,7 +166,7 @@ function MyTables() {
         })
 
         return indexMap;
-    }
+    };
 
     function handleBlur() {
         //Problema quando estou alterando o nome da coluna da tabela caso tenha uma igual a tabela é excluída mesmo ainda sendo alterada
@@ -181,7 +188,7 @@ function MyTables() {
         //Adicionar Dialog para avisar que os itens dessa coluna serão excluídas
 
         setInventory(updatedInventory);
-    }
+    };
 
     //#endregion
 
@@ -192,10 +199,35 @@ function MyTables() {
         const columnData = inventory.get(filteredColumn);
 
         if (columnData) {
-            const filteredColumnData = columnData.filter(value => value.includes(filterValue));
+
+            const filteredColumnData = columnData.filter((value) => value.includes(filterValue));
+
             console.log(filteredColumnData);
 
             filteredInventory.set(filteredColumn, filteredColumnData);
+            const indexMap = generateIndexMap(filteredInventory, inventory);
+
+            inventory.forEach((_, column) => {
+                if (column === filteredColumn)
+                    return;
+
+                const columnDataArray: string[] = [];
+                indexMap.forEach((indexNumbers) => {
+
+                    indexNumbers.forEach((indexNumber) => {
+                        const value = inventory.get(column)?.[indexNumber];
+
+                        if (value === "" || value === undefined)
+                            columnDataArray.push("");
+
+                        columnDataArray.push(value!);
+
+                    })
+
+                })
+
+                filteredInventory.set(column, columnDataArray);
+            })
         }
 
         setFilteredItens(filteredInventory);
