@@ -20,7 +20,7 @@ import { map } from "zod";
 function MyTables() {
     const [inventory, setInventory] = useState<Map<string, string[]>>(
         new Map<string, string[]>([
-            ["Produtos", ["Notbook", "Desktop"]],
+            ["Produtos", ["Notbook", "Desktop", "Netbook", "Notbook"]],
             ["Marcas", ["Samsung", "Lenovo"]]
         ])
     );
@@ -79,11 +79,12 @@ function MyTables() {
             setInventory(inventoryMap);
         }
     };
-
+ 
     function handleCellValueChange(rowIndex: number, column: string, value: string) {
 
         const inventoryToUpdate = isFilterMode ? filteredItens : inventory;
         const updatedInventory = new Map(inventoryToUpdate);
+        const indexMap = generateIndexMap(filteredItens, inventory);
         
         const columnData = updatedInventory.get(column);
 
@@ -97,9 +98,18 @@ function MyTables() {
 
             const updatedInventoryMap = new Map(inventory);
             const inventoryColumnData = updatedInventoryMap.get(column);
+            
+            console.log(indexMap);
+            const originalIndex = indexMap.get(column)?.[rowIndex];
+            
+            if(originalIndex === undefined){
+                console.log("Ocorreu um erro ao buscar index na coluna original");
+                return;
+            }
+            console.log("Original Index que será atualizado: " + originalIndex);
 
             if(inventoryColumnData){
-                inventoryColumnData[rowIndex] = value;
+                inventoryColumnData[originalIndex!] = value;
                 updatedInventoryMap.set(column, inventoryColumnData);
             }
 
@@ -110,6 +120,46 @@ function MyTables() {
         }
 
     };
+
+    function generateIndexMap(
+        filteredMap: Map<string, string[]>,
+        originalMap: Map<string, string[]>
+
+    ) : Map<string, number[]>{
+        //Mapeamento de index que será retornado
+        const indexMap = new Map<string, number[]>();
+
+        filteredMap.forEach((filteredValues, column) => {
+            const originalColumnData = originalMap.get(column)
+
+            if(!originalColumnData){
+                indexMap.set(column, []);
+                return;
+            }
+
+            const columnIndexMap: number[] = [];
+            const usedIndices = new Set<number>();
+
+            filteredValues.forEach(value => {
+                //Busca o index do valor na lista original verificando se o valor é igual e se o index ja não foi utilizado, para evitar conflitos de duplicação de valores
+                const originalIndex = originalColumnData.findIndex((v, index) => v === value && !usedIndices.has(index));
+
+                if(originalIndex !== -1){
+                    columnIndexMap.push(originalIndex);
+                    usedIndices.add(originalIndex);
+                }
+                else{
+                    columnIndexMap.push(-1);
+                }
+
+            })
+
+            //Aqui irá armazenar no map: o nome da coluna e a lista dos index que os valores filtrados tem na tabela original, assim podendo alterar os valores sem conflitos de duplicação
+            indexMap.set(column, columnIndexMap);
+        })
+
+        return indexMap;
+    }
 
     function handleBlur() {
         //Problema quando estou alterando o nome da coluna da tabela caso tenha uma igual a tabela é excluída mesmo ainda sendo alterada
