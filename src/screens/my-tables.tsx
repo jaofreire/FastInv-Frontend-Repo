@@ -35,10 +35,7 @@ function MyTables() {
 
     const tableHeaders = useMemo(() => Array.from(inventory.keys()), [inventory]);
     const tableRows = useMemo(() => Array.from(inventory.values()), [inventory]);
-    const maxRows = Math.max(...tableRows.map((values) => values.length + 1))
-
-    //Irá ser mapeado na tela se isFilterMode for true
-    const filteredTableHeaders = useMemo(() => Array.from(filteredItens?.keys()!), [filteredItens]);
+    const maxRows = Math.max(...tableRows.map((values) => values.length + 1));
 
     const [editingCell, setEditingCell] = useState({ row: null, column: null });
     const [editingColumn, setEditingColumn] = useState({ column: null })
@@ -273,7 +270,7 @@ function MyTables() {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                {(isFilterMode ? filteredTableHeaders : tableHeaders).map((columnName, columnIndex) => (
+                                                {(tableHeaders).map((columnName, columnIndex) => (
                                                     <>
 
                                                         <TableHead className="cursor-pointer h-16 text-base"
@@ -312,7 +309,7 @@ function MyTables() {
                                         <TableBody>
                                             {Array.from({ length: maxRows }).map((_, rowIndex) => (
                                                 <TableRow key={rowIndex}>
-                                                    {(isFilterMode ? filteredTableHeaders : tableHeaders).map((column, columnIndex) => (
+                                                    {(tableHeaders).map((column, columnIndex) => (
                                                         <TableCell className="font-medium cursor-pointer"
                                                             key={columnIndex}
                                                             onClick={() => handleEdit(rowIndex, column)}
