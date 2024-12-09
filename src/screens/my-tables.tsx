@@ -19,9 +19,9 @@ import ColumnOptions from "@/components/inventory-table/column-options";
 function MyTables() {
     const [inventory, setInventory] = useState<Map<string, string[]>>(
         new Map<string, string[]>([
-            ["Marcas", Array.from({ length: 10 }, (_, i) => `Marca${i + 1}`)],
-            ["Produtos", Array.from({ length: 8 }, (_, i) => `Produto${i + 1}`)],
-            ["Cores", Array.from({ length: 10 }, (_, i) => `Cor${i + 1}`)],
+            ["Produtos", ["Notebook", "Smartphone", "Tablet", "Fone de Ouvido", "Câmera", "Teclado", "Mouse",]],
+            ["Marcas", ["Xiaomi", "Samsung", "Apple", "Sony", "LG", "Asus", "Dell", "HP"]],
+            ["Cores", ["Vermelho", "Azul", "Verde", "Amarelo", "Preto", "Branco", "Cinza", "Laranja"]]
         ])
     );
 
@@ -36,7 +36,7 @@ function MyTables() {
     const maxRows = Math.max(...tableRows.map((values) => values.length + 1));
 
     const [editingCell, setEditingCell] = useState({ row: null, column: null });
-    const [editingColumn, setEditingColumn] = useState({ column: null })
+    const [editingColumn, setEditingColumn] = useState({ column: null });
 
     //#region Manipuladores de alterações na tabela
     function handleEdit(row: any, column: any) {
@@ -184,6 +184,29 @@ function MyTables() {
 
     //#region Manipuladores de fitragem na tabela
 
+    function handleFilterByAlphabeticalOrder(isAscending: boolean) {
+        console.log(isAscending);
+        setIsFilterMode(false);
+        const updatedTable = new Map<string, string[]>();
+
+        inventory.forEach((_, column) => {
+            const columnData = inventory.get(column)
+
+            if (columnData) {
+                const sortedColumn = isAscending
+                    ? [...columnData].sort()
+                    : [...columnData].sort((a, b) => {
+                        return a < b ? 1 : -1
+                    })
+
+                updatedTable.set(column, sortedColumn);
+            }
+
+        })
+        setIsFilterMode(true);
+        setFilteredItens(updatedTable);
+    }
+
     function handleFilterByNotContainValue(filteredColumn: string, notContainFilterValue: string) {
         setIsFilterMode(false);
         const filteredInventory = applyFilterWithCriteria(filteredColumn, notContainFilterValue, true);
@@ -261,6 +284,7 @@ function MyTables() {
 
     function removeFilters() {
         setIsFilterMode(false);
+        setFilteredItens(new Map<string, string[]>());
     }
 
     //#endregion
@@ -274,7 +298,7 @@ function MyTables() {
                         <Card className="w-full">
                             <div className="flex flex-col h-full">
                                 <CardHeader className="mb-4 h-28">
-                                    <CardTitle className="text-2xl font-bold">Inventário de notbooks</CardTitle>
+                                    <CardTitle className="text-2xl font-bold">Inventário de Produtos</CardTitle>
                                     <Button className="w-40 h-5 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><ClipboardPaste />Exportar excel</Button>
                                     {isFilterMode && <Button className="w-40 h-5 bg-red-500 opacity-90 text-white font-medium rounded-sm hover:opacity-100 hover:bg-red-600" onClick={removeFilters}><FilterX />Remover filtros</Button>}
                                 </CardHeader>
@@ -294,6 +318,7 @@ function MyTables() {
                                                                     onClickDeleteButton={() => deleteColumn(columnName)}
                                                                     onChangeFilterByContainValue={(_, filterValue) => handleFilterByContainValue(columnName, filterValue)}
                                                                     onChangeFilterByNotContainValue={(_, notContainFilterValue) => handleFilterByNotContainValue(columnName, notContainFilterValue)}
+                                                                    onClickFilterByAlphabeticalOrder={(isAscending) => handleFilterByAlphabeticalOrder(isAscending)}
                                                                 />
                                                             </div>
                                                             {editingColumn.column === columnIndex

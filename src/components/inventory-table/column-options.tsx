@@ -1,6 +1,6 @@
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { PopoverContent } from "@radix-ui/react-popover";
-import { Ellipsis, Filter, Trash2 } from "lucide-react";
+import { ArrowDownAZ, ArrowDownZA, ArrowUpZA, Ellipsis, Filter, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
@@ -8,11 +8,13 @@ function ColumnOptions
     ({
         onClickDeleteButton,
         onChangeFilterByContainValue,
-        onChangeFilterByNotContainValue
+        onChangeFilterByNotContainValue,
+        onClickFilterByAlphabeticalOrder
     }: {
         onClickDeleteButton: (columnName: string) => void;
-        onChangeFilterByContainValue: (filteredColumn: string, filterValue: string) => void
-        onChangeFilterByNotContainValue: (filteredColumn: string, filterValue: string) => void
+        onChangeFilterByContainValue: (filteredColumn: string, filterValue: string) => void;
+        onChangeFilterByNotContainValue: (filteredColumn: string, filterValue: string) => void;
+        onClickFilterByAlphabeticalOrder: (isAscending: boolean) => void;
     }) {
     return (
         <>
@@ -51,7 +53,7 @@ function ColumnOptions
                             <PopoverContent
                                 side="right"
                                 align="center"
-                                className="w-52 h-auto bg-gray-400 border rounded-lg"
+                                className="w-56 h-auto bg-gray-400 border rounded-lg"
                             >
                                 <div className="grid gap-1 w-full">
                                     <Input
@@ -68,6 +70,22 @@ function ColumnOptions
                                         onChange={(e) => onChangeFilterByNotContainValue("", e.target.value)}
                                     >
                                     </Input>
+                                    <Button
+                                        className="w-full justify-start gap-2 text-xs font-medium hover:font-semibold"
+                                        size="sm"
+                                        onClick={() => onClickFilterByAlphabeticalOrder(true)}
+                                    >
+                                        <ArrowDownAZ />
+                                        Ordem alfabética
+                                    </Button>
+                                    <Button
+                                        className="w-full justify-start gap-2 text-xs font-medium hover:font-semibold"
+                                        size="sm"
+                                        onClick={() => onClickFilterByAlphabeticalOrder(false)}
+                                    >
+                                        <ArrowUpZA />
+                                        Ordem alfabética invertida
+                                    </Button>
                                 </div>
                             </PopoverContent>
                         </Popover>
