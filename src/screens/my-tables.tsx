@@ -19,9 +19,11 @@ import ColumnOptions from "@/components/inventory-table/column-options";
 function MyTables() {
     const [inventory, setInventory] = useState<Map<string, string[]>>(
         new Map<string, string[]>([
-            ["Produtos", ["Notebook", "Smartphone", "Tablet", "Fone de Ouvido", "Câmera", "Teclado", "Mouse",]],
-            ["Marcas", ["Xiaomi", "Samsung", "Apple", "Sony", "LG", "Asus", "Dell", "HP"]],
-            ["Cores", ["Vermelho", "Azul", "Verde", "Amarelo", "Preto", "Branco", "Cinza", "Laranja"]]
+            ["Marcas", Array.from({ length: 1000 }, (_, i) => `Marca${i + 1}`)],
+            ["Produtos", Array.from({ length: 1000 }, (_, i) => `Produto${i + 1}`)],
+            ["Cores", Array.from({ length: 500 }, (_, i) => `Cor${i + 1}`)],
+            ["Países", Array.from({ length: 200 }, (_, i) => `País${i + 1}`)],
+            ["Categorias", Array.from({ length: 300 }, (_, i) => `Categoria${i + 1}`)]
         ])
     );
 
@@ -193,11 +195,13 @@ function MyTables() {
             const columnData = inventory.get(column)
 
             if (columnData) {
-                const sortedColumn = isAscending
-                    ? [...columnData].sort()
-                    : [...columnData].sort((a, b) => {
-                        return a < b ? 1 : -1
-                    })
+                const sortedColumn = [...columnData].sort((a, b) => {
+                    if (isAscending)
+                        return a > b ? 1 : -1
+
+                    return a < b ? 1 : -1
+                })
+
 
                 updatedTable.set(column, sortedColumn);
             }
@@ -241,10 +245,10 @@ function MyTables() {
                 //Identificando em qual index a coluna filtrada se encontra no map original
                 const inventoryArray = Array.from(inventory);
                 const columnIndex = inventoryArray.findIndex(([c]) => c === column);
-                console.log("ColumnIndex: " + columnIndex);
+                // console.log("ColumnIndex: " + columnIndex);
 
                 const filteredInventoryArray = Array.from(filteredInventory);
-                console.log(filteredInventoryArray);
+                // console.log(filteredInventoryArray);
 
                 //Excluindo coluna que está sendo filtrada existente no map
                 const deleteColumnIndex = filteredInventoryArray.findIndex(([c]) => c === column);
@@ -261,7 +265,7 @@ function MyTables() {
 
                 indexNumbers.forEach((indexNumber) => {
                     const value = inventory.get(column)?.[indexNumber];
-                    console.log("Value: " + value);
+                    // console.log("Value: " + value);
 
                     if (value === "" || value === undefined) {
                         columnDataArray.push("");
@@ -275,8 +279,8 @@ function MyTables() {
             })
 
             filteredInventory.set(column, columnDataArray);
-            console.log("Coluna adicionado foi: " + column);
-            console.log(filteredInventory);
+            // console.log("Coluna adicionado foi: " + column);
+            // console.log(filteredInventory);
         })
 
         return filteredInventory;
