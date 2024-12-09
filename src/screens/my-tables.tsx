@@ -188,20 +188,57 @@ function MyTables() {
     //#region Manipuladores de fitragem na tabela
 
     function handleFilterByName(filteredColumn: string, filterValue: string) {
-        const filteredInventory = new Map();
-        const columnData = inventory.get(filteredColumn);
-
-        if (columnData) {
-            const filteredColumnData = columnData.filter(value => value.includes(filterValue));
-            console.log(filteredColumnData);
-
-            filteredInventory.set(filteredColumn, filteredColumnData);
-        }
+        const filteredInventory = applyFilterWithCriteria(filteredColumn, filterValue);
 
         setFilteredItens(filteredInventory);
         setIsFilterMode(true);
         console.log(filteredItens);
     }
+
+    function applyFilterWithCriteria(filteredColumn: string, criteriaValue: string): Map<string, string[]> {
+        let filteredInventory = new Map<string, string[]>();
+        const columnData = inventory.get(filteredColumn)!;
+
+        const filteredColumnData = columnData.filter((value) => value.includes(criteriaValue));
+        filteredInventory.set(filteredColumn, filteredColumnData);
+        const indexMap = generateIndexMap(filteredInventory, inventory);
+
+        inventory.forEach((_, column) => {
+
+            if (column === filteredColumn) {
+                const inventoryArray = Array.from(inventory);
+                const columnIndex = inventoryArray.findIndex(([c]) => c === column);
+                
+                const filteredInventoryArray = Array.from(filteredInventory);
+                console.log(filteredInventoryArray);
+                
+                filteredInventoryArray.splice(columnIndex, 1,[column, filteredColumnData]);
+                filteredInventory = new Map<string, string[]>(filteredInventoryArray);
+                return;
+            }
+
+            const columnDataArray: string[] = [];
+            indexMap.forEach((indexNumbers) => {
+
+                indexNumbers.forEach((indexNumber) => {
+                    const value = inventory.get(column)?.[indexNumber];
+                    console.log("Value: " + value);
+
+                    if (value === "" || value === undefined)
+                        columnDataArray.push("");
+
+                    columnDataArray.push(value!);
+
+                })
+
+            })
+
+            filteredInventory.set(column, columnDataArray);
+        })
+
+        return filteredInventory;
+    }
+
 
     function removeFilters() {
         setIsFilterMode(false);
