@@ -5,11 +5,14 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 function ColumnOptions
-    ({ onClickDeleteButton,
-        onChangeFilterByName
+    ({
+        onClickDeleteButton,
+        onChangeFilterByContainValue,
+        onChangeFilterByNotContainValue
     }: {
         onClickDeleteButton: (columnName: string) => void;
-        onChangeFilterByName: (filteredColumn: string, filterValue: string) => void
+        onChangeFilterByContainValue: (filteredColumn: string, filterValue: string) => void
+        onChangeFilterByNotContainValue: (filteredColumn: string, filterValue: string) => void
     }) {
     return (
         <>
@@ -33,6 +36,7 @@ function ColumnOptions
                             Apagar
                         </Button>
                         {/* Popover de filtros */}
+
                         <Popover>
                             <PopoverTrigger className="cursor-pointer" asChild>
                                 <Button
@@ -47,13 +51,21 @@ function ColumnOptions
                             <PopoverContent
                                 side="right"
                                 align="center"
-                                className="w-32 h-auto bg-gray-200 border rounded-lg"
+                                className="w-52 h-auto bg-gray-400 border rounded-lg"
                             >
-                                <div className="grid gap-1">
+                                <div className="grid gap-1 w-full">
                                     <Input
-                                        placeholder="Filtro por nome"
+                                        className="bg-gray-200"
+                                        placeholder="Filtrar por valor"
                                         type="text"
-                                        onChange={(e) => onChangeFilterByName("", e.target.value)}
+                                        onChange={(e) => onChangeFilterByContainValue("", e.target.value)}
+                                    >
+                                    </Input>
+                                    <Input
+                                        className="bg-gray-200"
+                                        placeholder="Filtrar por não contém valor"
+                                        type="text"
+                                        onChange={(e) => onChangeFilterByNotContainValue("", e.target.value)}
                                     >
                                     </Input>
                                 </div>

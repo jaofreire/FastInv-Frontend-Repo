@@ -19,11 +19,9 @@ import ColumnOptions from "@/components/inventory-table/column-options";
 function MyTables() {
     const [inventory, setInventory] = useState<Map<string, string[]>>(
         new Map<string, string[]>([
-            ["Marcas", ["Samsung", "Lenovo", "Apple", "Dell"]],
-            ["Produtos", ["Notebook", "Celular", "Tablet", "Monitor"]],
-            ["Cores", ["Preto", "Branco", "Azul", "Vermelho"]],
-            ["Países", ["Brasil", "EUA", "China", "Alemanha"]],
-            ["Categorias", ["Eletrônicos", "", "", "Alimentos"]]
+            ["Marcas", Array.from({ length: 10 }, (_, i) => `Marca${i + 1}`)],
+            ["Produtos", Array.from({ length: 8 }, (_, i) => `Produto${i + 1}`)],
+            ["Cores", Array.from({ length: 10 }, (_, i) => `Cor${i + 1}`)],
         ])
     );
 
@@ -186,18 +184,30 @@ function MyTables() {
 
     //#region Manipuladores de fitragem na tabela
 
-    function handleFilterByName(filteredColumn: string, filterValue: string) {
-        const filteredInventory = applyFilterWithCriteria(filteredColumn, filterValue);
+    function handleFilterByNotContainValue(filteredColumn: string, notContainFilterValue: string) {
+        setIsFilterMode(false);
+        const filteredInventory = applyFilterWithCriteria(filteredColumn, notContainFilterValue, true);
 
         setFilteredItens(filteredInventory);
         setIsFilterMode(true);
     }
 
-    function applyFilterWithCriteria(filteredColumn: string, criteriaValue: string): Map<string, string[]> {
+    function handleFilterByContainValue(filteredColumn: string, filterValue: string) {
+        setIsFilterMode(false);
+        const filteredInventory = applyFilterWithCriteria(filteredColumn, filterValue, false);
+
+        setFilteredItens(filteredInventory);
+        setIsFilterMode(true);
+    }
+
+    function applyFilterWithCriteria(filteredColumn: string, criteriaValue: string, isNotContainFilter: boolean): Map<string, string[]> {
         let filteredInventory = new Map<string, string[]>();
         const columnData = inventory.get(filteredColumn)!;
 
-        const filteredColumnData = columnData.filter((value) => value.includes(criteriaValue));
+        const filteredColumnData = isNotContainFilter
+            ? columnData.filter((value) => !value.includes(criteriaValue))
+            : columnData.filter((value) => value.includes(criteriaValue));
+
         filteredInventory.set(filteredColumn, filteredColumnData);
 
         const indexMap = generateIndexMap(filteredInventory, inventory);
@@ -230,8 +240,10 @@ function MyTables() {
                     const value = inventory.get(column)?.[indexNumber];
                     console.log("Value: " + value);
 
-                    if (value === "" || value === undefined)
+                    if (value === "" || value === undefined) {
                         columnDataArray.push("");
+                        return;
+                    }
 
                     columnDataArray.push(value!);
 
@@ -280,7 +292,8 @@ function MyTables() {
                                                             <div className="flex min-w-fit">
                                                                 <ColumnOptions
                                                                     onClickDeleteButton={() => deleteColumn(columnName)}
-                                                                    onChangeFilterByName={(_, filterValue) => handleFilterByName(columnName, filterValue)}
+                                                                    onChangeFilterByContainValue={(_, filterValue) => handleFilterByContainValue(columnName, filterValue)}
+                                                                    onChangeFilterByNotContainValue={(_, notContainFilterValue) => handleFilterByNotContainValue(columnName, notContainFilterValue)}
                                                                 />
                                                             </div>
                                                             {editingColumn.column === columnIndex
