@@ -19,16 +19,11 @@ import ColumnOptions from "@/components/inventory-table/column-options";
 function MyTables() {
     const [inventory, setInventory] = useState<Map<string, string[]>>(
         new Map<string, string[]>([
-            ["Marcas", Array.from({ length: 1000 }, (_, i) => `Marca${i + 1}`)],
-            ["Produtos", Array.from({ length: 1000 }, (_, i) => `Produto${i + 1}`)],
-            ["Cores", Array.from({ length: 500 }, (_, i) => `Cor${i + 1}`)],
-            // ["Países", Array.from({ length: 200 }, (_, i) => `País${i + 1}`)],
-            // ["Categorias", Array.from({ length: 300 }, (_, i) => `Categoria${i + 1}`)],
-            // ["Lojas", Array.from({ length: 150 }, (_, i) => `Loja${i + 1}`)],
-            // ["Departamentos", Array.from({ length: 100 }, (_, i) => `Departamento${i + 1}`)],
-            // ["Modelos", Array.from({ length: 700 }, (_, i) => `Modelo${i + 1}`)],
-            // ["Fornecedores", Array.from({ length: 250 }, (_, i) => `Fornecedor${i + 1}`)],
-            // ["Séries", Array.from({ length: 400 }, (_, i) => `Série${i + 1}`)]
+            ["Marcas", ["Samsung", "Lenovo", "Apple", "Dell"]],
+            ["Produtos", ["Notebook", "Celular", "Tablet", "Monitor"]],
+            ["Cores", ["Preto", "Branco", "Azul", "Vermelho"]],
+            ["Países", ["Brasil", "EUA", "China", "Alemanha"]],
+            ["Categorias", ["Eletrônicos", "", "", "Alimentos"]]
         ])
     );
 
@@ -166,7 +161,7 @@ function MyTables() {
         })
 
         return indexMap;
-    };
+    }
 
     function handleBlur() {
         //Problema quando estou alterando o nome da coluna da tabela caso tenha uma igual a tabela é excluída mesmo ainda sendo alterada
@@ -188,51 +183,71 @@ function MyTables() {
         //Adicionar Dialog para avisar que os itens dessa coluna serão excluídas
 
         setInventory(updatedInventory);
-    };
+    }
 
     //#endregion
 
     //#region Manipuladores de fitragem na tabela
 
     function handleFilterByName(filteredColumn: string, filterValue: string) {
-        const filteredInventory = new Map();
-        const columnData = inventory.get(filteredColumn);
-
-        if (columnData) {
-
-            const filteredColumnData = columnData.filter((value) => value.includes(filterValue));
-
-            console.log(filteredColumnData);
-
-            filteredInventory.set(filteredColumn, filteredColumnData);
-            const indexMap = generateIndexMap(filteredInventory, inventory);
-
-            inventory.forEach((_, column) => {
-                if (column === filteredColumn)
-                    return;
-
-                const columnDataArray: string[] = [];
-                indexMap.forEach((indexNumbers) => {
-
-                    indexNumbers.forEach((indexNumber) => {
-                        const value = inventory.get(column)?.[indexNumber];
-
-                        if (value === "" || value === undefined)
-                            columnDataArray.push("");
-
-                        columnDataArray.push(value!);
-
-                    })
-
-                })
-
-                filteredInventory.set(column, columnDataArray);
-            })
-        }
+        const filteredInventory = applyFilterWithCriteria(filteredColumn, filterValue);
 
         setFilteredItens(filteredInventory);
         setIsFilterMode(true);
-        console.log(filteredItens);
+    }
+
+    function applyFilterWithCriteria(filteredColumn: string, criteriaValue: string): Map<string, string[]> {
+        let filteredInventory = new Map<string, string[]>();
+        const columnData = inventory.get(filteredColumn)!;
+
+        const filteredColumnData = columnData.filter((value) => value.includes(criteriaValue));
+        filteredInventory.set(filteredColumn, filteredColumnData);
+
+        const indexMap = generateIndexMap(filteredInventory, inventory);
+
+        inventory.forEach((_, column) => {
+
+            if (column === filteredColumn) {
+                //Identificando em qual index a coluna filtrada se encontra no map original
+                const inventoryArray = Array.from(inventory);
+                const columnIndex = inventoryArray.findIndex(([c]) => c === column);
+                console.log("ColumnIndex: " + columnIndex);
+
+                const filteredInventoryArray = Array.from(filteredInventory);
+                console.log(filteredInventoryArray);
+
+                //Excluindo coluna que está sendo filtrada existente no map
+                const deleteColumnIndex = filteredInventoryArray.findIndex(([c]) => c === column);
+                filteredInventoryArray.splice(deleteColumnIndex, 1);
+
+                //Adicionando de volta a coluna que está sendo filtrado so que em sua respectiva posição
+                filteredInventoryArray.splice(columnIndex, 1, [column, filteredColumnData]);
+                filteredInventory = new Map<string, string[]>(filteredInventoryArray);
+                return;
+            }
+
+            const columnDataArray: string[] = [];
+            indexMap.forEach((indexNumbers) => {
+
+                indexNumbers.forEach((indexNumber) => {
+                    const value = inventory.get(column)?.[indexNumber];
+                    console.log("Value: " + value);
+
+                    if (value === "" || value === undefined)
+                        columnDataArray.push("");
+
+                    columnDataArray.push(value!);
+
+                })
+
+            })
+
+            filteredInventory.set(column, columnDataArray);
+            console.log("Coluna adicionado foi: " + column);
+            console.log(filteredInventory);
+        })
+
+        return filteredInventory;
     }
 
     function removeFilters() {
