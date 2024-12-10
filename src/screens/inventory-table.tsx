@@ -11,7 +11,7 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClipboardPaste, FilterX, PlusIcon } from "lucide-react";
+import { ClipboardPaste, FilterX, Pencil, PlusIcon, Trash } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
@@ -303,8 +303,14 @@ function InventoryTable() {
                     <div className="w-full h-full flex p-6">
                         <Card className="w-full">
                             <div className="flex flex-col h-full">
-                                <CardHeader className="mb-4 h-28">
-                                    <CardTitle className="text-2xl font-bold">{tableName}</CardTitle>
+                                <CardHeader className="mb-4 h-28 w-full">
+                                    <div className="flex items-center gap-5 w-[98%]">
+                                        <CardTitle className="text-2xl font-bold">{tableName}</CardTitle>
+                                        <Pencil className="w-5 cursor-pointer" />
+                                        <div className="flex flex-1 justify-end">
+                                            <Button variant="destructive" className="w-40 h-8 bg opacity-90 text-white font-regular hover:opacity-100 hover:bg-red-600"><Trash />Excluir esta tabela</Button>
+                                        </div>
+                                    </div>
                                     <Button className="w-40 h-5 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><ClipboardPaste />Exportar excel</Button>
                                     {isFilterMode && <Button className="w-40 h-5 bg-red-500 opacity-90 text-white font-medium rounded-sm hover:opacity-100 hover:bg-red-600" onClick={removeFilters}><FilterX />Remover filtros</Button>}
                                 </CardHeader>
