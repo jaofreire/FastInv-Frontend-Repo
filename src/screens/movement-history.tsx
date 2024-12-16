@@ -83,7 +83,7 @@ function MovementHistory() {
                             <div className="flex flex-col h-full">
                                 <CardHeader className="mb-4 h-28 w-full">
                                     <div className="flex items-center gap-5 w-[98%]">
-                                        <CardTitle className="text-2xl font-bold">Histórico de movimentação</CardTitle>
+                                        <CardTitle className="text-2xl font-bold"><span className="text-orange-500">Histórico de</span> movimentação</CardTitle>
                                     </div>
                                 </CardHeader>
                                 <CardContent>
