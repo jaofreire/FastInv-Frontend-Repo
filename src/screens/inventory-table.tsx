@@ -42,7 +42,12 @@ function InventoryTable() {
     const [editingCell, setEditingCell] = useState({ row: null, column: null });
     const [editingColumn, setEditingColumn] = useState({ column: null });
 
+    // let columnEdited: string;
+    // let previousCellValue: any;
+    // let currentCellValue: any;
+
     //#region Manipuladores de alterações na tabela
+
     function handleEdit(row: any, column: any) {
         setEditingCell({ row, column });
     };
@@ -90,6 +95,9 @@ function InventoryTable() {
         const columnData = updatedInventory.get(column);
 
         if (columnData) {
+            // columnEdited = column;
+            // previousCellValue = columnData[rowIndex];
+            // currentCellValue = value;
             columnData[rowIndex] = value;
             updatedInventory.set(column, columnData);
         }
@@ -167,6 +175,7 @@ function InventoryTable() {
         //Solução: alterar o nome da coluna apenas quando desfocar do input
         setEditingCell({ row: null, column: null });
         setEditingColumn({ column: null });
+        //Chamar Endpoint que irá atualizar os Itens da tabela
     };
 
     function addNewColumn() {
