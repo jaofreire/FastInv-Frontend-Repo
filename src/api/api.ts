@@ -1,11 +1,11 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL: 'https://localhost:8081/api',
+    baseURL: 'https://localhost:7254/api',
 
     headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI5MTNjMzM3Mi1mODY5LTQ4MjMtODEyZi05MTI0MTYyOWE2MzUiLCJ1bmlxdWVfbmFtZSI6Ik1haW5BZG1pbiIsInJvbGUiOiJBZG1pbiIsIm5iZiI6MTczNDM4MTUzMiwiZXhwIjoxNzM0NDY3OTMyLCJpYXQiOjE3MzQzODE1MzJ9.IR49RC228OcFqchR3dhVqPiMis7fkJRUi9fMCCU0G_A'
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI5MDg2MTMxZi0xMTQyLTRmMmYtYmQ5OS1lYTliNjA0M2M0MWMiLCJ1bmlxdWVfbmFtZSI6IkFkbWluIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzM0NDM1MjcyLCJleHAiOjE3MzQ1MjE2NzIsImlhdCI6MTczNDQzNTI3Mn0.bSWDmncHg5m4BKO9D49VpTz9EeQe4eqQRm-iIFz73y0'
     },
 })
 

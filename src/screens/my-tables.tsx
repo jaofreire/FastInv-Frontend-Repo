@@ -1,19 +1,19 @@
-import { fetchInventoryTablesByCompanyId } from "@/api/api-inventory-table";
 import SideBar from "@/components/Global/sidebar";
 import TableCard from "@/components/my-tables/table-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BadgePlus, Blend, ClipboardPaste } from "lucide-react";
+import { getInventoryTablesByCompanyId } from "@/services/inventory-table-service";
+import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table-summary-type";
+import { BadgePlus, Blend } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function MyTables() {
-    const [tables, setTable] = useState(["Inventário de nootboks", "Inventário de produtos"]);
-    const [fetchedInventoryTables, setFetchedInventoryTables] = useState<any>();
+    const [fetchedInventoryTables, setFetchedInventoryTables] = useState<InventoryTabelSummaryType[]>([]);
 
     useEffect(() => {
         const loadInventoryTables = async () => {
-            const inventoryTables = await fetchInventoryTablesByCompanyId('035b5700-abd7-4184-8be0-a38adfdd33a0');
+            const inventoryTables = await getInventoryTablesByCompanyId('e38bfaea-a2a9-4d05-ab9e-7ce9e0fd3af2');
             setFetchedInventoryTables(inventoryTables);
         }
 
@@ -40,9 +40,9 @@ function MyTables() {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="flex flex-col items-center gap-5 w-full">
-                                    {tables.map((value, index) => (
-                                        <Link className="w-full flex justify-center" to={'/inventory-table/' + value}>
-                                            <TableCard key={index} tableName={value} />
+                                    {fetchedInventoryTables!.map((inventoryTable, index) => (
+                                        <Link className="w-full flex justify-center" to={'/inventory-table/' + inventoryTable.Name}>
+                                            <TableCard key={index} tableName={inventoryTable.Name} registersCount={inventoryTable.RegistersCount} />
                                         </Link>
                                     ))}
                                 </CardContent>

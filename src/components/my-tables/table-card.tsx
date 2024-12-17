@@ -2,9 +2,11 @@ import { ChevronRight } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 
 function TableCard({
-    tableName
+    tableName,
+    registersCount
 }: {
-    tableName: string
+    tableName: string,
+    registersCount: number
 }) {
     return (
         <>
@@ -16,7 +18,7 @@ function TableCard({
                                 <div>
                                     <h3 className="font-semibold">{tableName}</h3>
                                     <p className="text-sm text-muted-foreground">
-                                        200 Registros
+                                        {"Registros: " + registersCount}
                                     </p>
                                 </div>
 
