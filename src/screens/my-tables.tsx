@@ -3,7 +3,7 @@ import TableCard from "@/components/my-tables/table-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getInventoryTablesByCompanyId } from "@/services/inventory-table-service";
-import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table-summary-type";
+import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table/inventory-table-summary-type";
 import { BadgePlus, Blend } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -12,12 +12,12 @@ function MyTables() {
     const [fetchedInventoryTables, setFetchedInventoryTables] = useState<InventoryTabelSummaryType[]>([]);
 
     useEffect(() => {
-        const loadInventoryTables = async () => {
-            const inventoryTables = await getInventoryTablesByCompanyId('e38bfaea-a2a9-4d05-ab9e-7ce9e0fd3af2');
+        const loadInventoryTablesSummary = async () => {
+            const inventoryTables = await getInventoryTablesByCompanyId('035b5700-abd7-4184-8be0-a38adfdd33a0');
             setFetchedInventoryTables(inventoryTables);
         }
 
-        loadInventoryTables();
+        loadInventoryTablesSummary();
     }, []);
 
     return (
@@ -41,7 +41,7 @@ function MyTables() {
                                 </CardHeader>
                                 <CardContent className="flex flex-col items-center gap-5 w-full">
                                     {fetchedInventoryTables!.map((inventoryTable, index) => (
-                                        <Link className="w-full flex justify-center" to={'/inventory-table/' + inventoryTable.Name}>
+                                        <Link className="w-full flex justify-center" to={'/inventory-table/' + inventoryTable.Name + '/' + inventoryTable.Id}>
                                             <TableCard key={index} tableName={inventoryTable.Name} registersCount={inventoryTable.RegistersCount} />
                                         </Link>
                                     ))}

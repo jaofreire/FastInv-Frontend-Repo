@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path='/' element={<SignIn />} />
       <Route path='/main-page' element={<MainPage />} />
       <Route path='/my-tables' element={<MyTables />} />
-      <Route path='/inventory-table/:tableName' element={<InventoryTable />} />
+      <Route path='/inventory-table/:tableName/:id' element={<InventoryTable />} />
       <Route path='/movement-history' element={<MovementHistory />} />
     </Routes>
   </BrowserRouter>

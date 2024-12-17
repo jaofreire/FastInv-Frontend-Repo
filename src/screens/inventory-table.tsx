@@ -12,20 +12,28 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ClipboardPaste, FilterX, Pencil, PlusIcon, Trash } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
 import { useParams } from "react-router-dom";
+import { getInventoryTableById } from "@/services/inventory-table-service";
 
 function InventoryTable() {
+    const { tableName, id } = useParams();
 
-    const { tableName } = useParams();
+    useEffect(() => {
+        const loadInventoryTable = async() =>{
+            if(id){
+                const inventoryTable = await getInventoryTableById(id.toString());
+                setInventory(inventoryTable.items);
+            }
+        };
+
+        loadInventoryTable();
+    }, []);
 
     const [inventory, setInventory] = useState<Map<string, string[]>>(
         new Map<string, string[]>([
-            ["Marcas", ["Xiaomi", "Samsung", "Apple", "Sony", "LG", "Asus", "Dell", "HP", "Lenovo", "Acer"]],
-            ["Produtos", ["Notebook", "Smartphone", "Tablet", "Fone de Ouvido", "Câmera", "Teclado", "Mouse", "Monitor"]],
-            ["Cores", ["Vermelho", "Azul", "Verde", "Amarelo", "Preto", "Branco", "Cinza", "Laranja", "Roxo", "Rosa"]]
         ])
     );
 
