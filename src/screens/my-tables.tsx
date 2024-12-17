@@ -1,14 +1,24 @@
+import { fetchInventoryTablesByCompanyId } from "@/api/api-inventory-table";
 import SideBar from "@/components/Global/sidebar";
 import TableCard from "@/components/my-tables/table-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BadgePlus, Blend, ClipboardPaste } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function MyTables() {
-
     const [tables, setTable] = useState(["Inventário de nootboks", "Inventário de produtos"]);
+    const [fetchedInventoryTables, setFetchedInventoryTables] = useState<any>();
+
+    useEffect(() => {
+        const loadInventoryTables = async () => {
+            const inventoryTables = await fetchInventoryTablesByCompanyId('035b5700-abd7-4184-8be0-a38adfdd33a0');
+            setFetchedInventoryTables(inventoryTables);
+        }
+
+        loadInventoryTables();
+    }, []);
 
     return (
         <>
@@ -24,8 +34,8 @@ function MyTables() {
                                             <CardTitle className="pt-5 pl-10 text-3xl font-bold">Suas <span className="text-orange-400">Tabelas</span>:</CardTitle>
                                         </div>
                                         <div className="flex flex-col gap-3 justify-end h-24 w-52 pr-5">
-                                            <Button className="w-30 h-8 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><BadgePlus/>Criar tabela</Button>
-                                            <Button className="w-30 h-8 bg-slate-950 opacity-90 text-white font-semibold hover:opacity-100 hover:bg-slate-950"><Blend/>Migrar tabela Excel</Button>
+                                            <Button className="w-30 h-8 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><BadgePlus />Criar tabela</Button>
+                                            <Button className="w-30 h-8 bg-slate-950 opacity-90 text-white font-semibold hover:opacity-100 hover:bg-slate-950"><Blend />Migrar tabela Excel</Button>
                                         </div>
                                     </div>
                                 </CardHeader>
