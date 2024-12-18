@@ -26,7 +26,7 @@ function SideBar() {
                     </Link>
                     <Link
                         className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900"
-                        to={'/main-page'}>
+                        to={'/movement-history'}>
                         <List className="h-4 w-4" />
                         Movimentações
                     </Link>
