@@ -35,6 +35,7 @@ function MyTables() {
 
         formData.append('file', excelFile);
         await migrateExcel(companyId, formData);
+        window.location.reload();
     }
 
     return (
