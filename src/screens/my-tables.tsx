@@ -1,17 +1,16 @@
 import SideBar from "@/components/Global/sidebar";
 import CreateNewInventoryTableDialog from "@/components/my-tables/create-new-inventory-table-dialog";
+import MigrateExcelDialog from "@/components/my-tables/migrate-excel-dialog";
 import TableCard from "@/components/my-tables/table-card";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getInventoryTablesByCompanyId, registerNewInventoryTable } from "@/services/inventory-table-service";
+import { getInventoryTablesByCompanyId, migrateExcel, registerNewInventoryTable } from "@/services/inventory-table-service";
 import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table/inventory-table-summary-type";
-import { Blend } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function MyTables() {
     const [fetchedInventoryTables, setFetchedInventoryTables] = useState<InventoryTabelSummaryType[]>([]);
-    const companyId: string = 'e38bfaea-a2a9-4d05-ab9e-7ce9e0fd3af2';
+    const companyId: string = '035b5700-abd7-4184-8be0-a38adfdd33a0';
 
     useEffect(() => {
         const loadInventoryTablesSummary = async () => {
@@ -25,6 +24,17 @@ function MyTables() {
     async function createNewInventoryTable(name: string) {
         await registerNewInventoryTable(companyId, name);
         window.location.reload();
+    }
+
+    async function migrateExcelToInventoryTable(excelFile: File) {
+        const formData = new FormData();
+        if (!excelFile) {
+            alert('É necessário um arquivo para a migração')
+            return;
+        }
+
+        formData.append('file', excelFile);
+        await migrateExcel(companyId, formData);
     }
 
     return (
@@ -44,7 +54,9 @@ function MyTables() {
                                             <CreateNewInventoryTableDialog
                                                 onClickConfirmButton={(name) => createNewInventoryTable(name)}
                                             />
-                                            <Button className="w-30 h-8 bg-slate-950 opacity-90 text-white font-semibold hover:opacity-100 hover:bg-slate-950"><Blend />Migrar tabela Excel</Button>
+                                            <MigrateExcelDialog
+                                                onClickConfirmButton={(excelFile) => migrateExcelToInventoryTable(excelFile)}
+                                            />
                                         </div>
                                     </div>
                                 </CardHeader>

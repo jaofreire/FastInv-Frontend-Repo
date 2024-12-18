@@ -1,9 +1,22 @@
-import { AxiosResponse } from "axios";
 import api from "./api"
 import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table/inventory-table-summary-type";
 import { InventoryTableType } from "@/types/api-response-types/inventory-table/inventory-table-type";
 import { ApiResponse } from "@/types/api-response-types/api-response";
 
+export const postMigrateExcelToInventoryTable = async (companyId: string, file: FormData) => {
+    await api.post<ApiResponse<InventoryTableType>>('/InventoryTable/migrate-table/' + companyId, file, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        }
+    })
+        .then((response) => {
+            if (response.data.isSuccess) {
+                return;
+            }
+        })
+
+    return;
+}
 
 export const postNewInventoryTable = async (companyId: string, name: string) => {
     await api.post<ApiResponse<InventoryTableType>>('/InventoryTable', {
@@ -35,7 +48,6 @@ export const fetchInventoryTablesByCompanyId = async (companyId: string): Promis
 
     return data;
 }
-
 
 export const fetchInventoryTableById = async (id: string): Promise<InventoryTableType> => {
     var data = await api.get<ApiResponse<InventoryTableType>>('/InventoryTable/' + id)

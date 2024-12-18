@@ -1,6 +1,10 @@
-import { fetchInventoryTableById, fetchInventoryTablesByCompanyId, postNewInventoryTable } from "@/api/api-inventory-table"
+import { fetchInventoryTableById, fetchInventoryTablesByCompanyId, postMigrateExcelToInventoryTable, postNewInventoryTable } from "@/api/api-inventory-table"
 import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table/inventory-table-summary-type"
 import { InventoryTableType } from "@/types/api-response-types/inventory-table/inventory-table-type";
+
+export const migrateExcel = async (companyId: string, excelFile: FormData) => {
+    await postMigrateExcelToInventoryTable(companyId, excelFile);
+}
 
 export const registerNewInventoryTable = async (companyId: string, name: string) => {
     await postNewInventoryTable(companyId, name);
