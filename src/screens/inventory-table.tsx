@@ -16,14 +16,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
 import { useParams } from "react-router-dom";
-import { getInventoryTableById } from "@/services/inventory-table-service";
+import { getInventoryTableById, updateInventoryTableItems } from "@/services/inventory-table-service";
+import { UpdateInventoryTableRequestType } from "@/types/api-request-types/update-inventory-table-request-type";
 
 function InventoryTable() {
     const { tableName, id } = useParams();
 
     useEffect(() => {
-        const loadInventoryTable = async() =>{
-            if(id){
+        const loadInventoryTable = async () => {
+            if (id) {
                 const inventoryTable = await getInventoryTableById(id.toString());
                 setInventory(inventoryTable.items);
             }
@@ -50,9 +51,40 @@ function InventoryTable() {
     const [editingCell, setEditingCell] = useState({ row: null, column: null });
     const [editingColumn, setEditingColumn] = useState({ column: null });
 
-    // let columnEdited: string;
-    // let previousCellValue: any;
-    // let currentCellValue: any;
+    const [columnEdited, setColumnEdited] = useState<string>('');
+    const [previousValue, setPreviousValue] = useState<string>('');
+    const [currentValue, setCurrentValue] = useState<string>('');
+
+    function setEditedValues(column: string, previous: string, current: string) {
+        setColumnEdited(column);
+        setPreviousValue(previous);
+        setCurrentValue(current);
+    }
+
+    function removeEditedValues() {
+        setColumnEdited('');
+        setPreviousValue('');
+        setCurrentValue('');
+    }
+
+    //#region Chamadas para API
+
+    async function updateItems() {
+        console.log(columnEdited);
+
+        if (columnEdited === '' || previousValue === '' || currentValue === '') {
+            return;
+        }
+
+        if (id && tableName) {
+            const inventoryObject = Object.fromEntries(inventory);
+            console.log(inventoryObject);
+            const updateRequest = new UpdateInventoryTableRequestType(id, tableName, columnEdited, previousValue, currentValue, inventoryObject);
+            await updateInventoryTableItems(updateRequest);
+        }
+    }
+
+    //#endregion
 
     //#region Manipuladores de alterações na tabela
 
@@ -87,9 +119,12 @@ function InventoryTable() {
             inventoryArray.splice(inventoryOldColumnIndex, 1, [newColumn, inventoryOldColumnData]);
 
             const map = new Map(inventoryArray);
+
+            setEditedValues(oldColumn, oldColumn, newColumn);
             setInventory(map);
         }
         else {
+            setEditedValues(oldColumn, oldColumn, newColumn);
             setInventory(inventoryMap);
         }
     };
@@ -103,9 +138,8 @@ function InventoryTable() {
         const columnData = updatedInventory.get(column);
 
         if (columnData) {
-            // columnEdited = column;
-            // previousCellValue = columnData[rowIndex];
-            // currentCellValue = value;
+            setEditedValues(column, columnData[rowIndex], value);
+
             columnData[rowIndex] = value;
             updatedInventory.set(column, columnData);
         }
@@ -183,7 +217,8 @@ function InventoryTable() {
         //Solução: alterar o nome da coluna apenas quando desfocar do input
         setEditingCell({ row: null, column: null });
         setEditingColumn({ column: null });
-        //Chamar Endpoint que irá atualizar os Itens da tabela
+        updateItems();
+        removeEditedValues();
     };
 
     function addNewColumn() {
