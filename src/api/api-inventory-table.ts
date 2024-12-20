@@ -84,3 +84,16 @@ export const putUpdateInventoryTableItems = async (request: UpdateInventoryTable
 
     return;
 }
+
+export const deleteInventoryTable = async (id: string) => {
+    await api.delete<ApiResponse<InventoryTableType>>('/InventoryTable/' + id)
+    .then((response) => {
+        const responseData = response.data;
+
+        if(responseData.isSuccess){
+            return;
+        }
+    })
+
+    return;
+}

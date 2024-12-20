@@ -15,12 +15,15 @@ import { ClipboardPaste, FilterX, Pencil, PlusIcon, Trash } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
-import { useParams } from "react-router-dom";
-import { getInventoryTableById, updateInventoryTableItems } from "@/services/inventory-table-service";
+import { useNavigate, useParams } from "react-router-dom";
+import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems } from "@/services/inventory-table-service";
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/update-inventory-table-request-type";
+import RemoveTableAlertDialog from "@/components/inventory-table/remove-table-alert-dialog";
 
 function InventoryTable() {
     const { tableName, id } = useParams();
+
+    const navigation = useNavigate();
 
     useEffect(() => {
         const loadInventoryTable = async () => {
@@ -81,6 +84,13 @@ function InventoryTable() {
             console.log(inventoryObject);
             const updateRequest = new UpdateInventoryTableRequestType(id, tableName, columnEdited, previousValue, currentValue, inventoryObject);
             await updateInventoryTableItems(updateRequest);
+        }
+    }
+
+    async function removeTable() {
+        if (id) {
+            await removeInventoryTable(id);
+            navigation(-1);
         }
     }
 
@@ -360,7 +370,9 @@ function InventoryTable() {
                                         <CardTitle className="text-2xl font-bold">{tableName}</CardTitle>
                                         <Pencil className="w-5 cursor-pointer" />
                                         <div className="flex flex-1 justify-end">
-                                            <Button variant="destructive" className="w-40 h-8 bg opacity-90 text-white font-regular hover:opacity-100 hover:bg-red-600"><Trash />Excluir esta tabela</Button>
+                                            <RemoveTableAlertDialog
+                                                onClickConfirmButton={removeTable}
+                                            />
                                         </div>
                                     </div>
                                     <Button className="w-40 h-5 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><ClipboardPaste />Exportar excel</Button>
