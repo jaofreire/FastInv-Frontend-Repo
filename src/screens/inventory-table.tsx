@@ -15,15 +15,20 @@ import { ClipboardPaste, FilterX, Pencil, PlusIcon, Trash } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
-import { useParams } from "react-router-dom";
-import { getInventoryTableById } from "@/services/inventory-table-service";
+import { useNavigate, useParams } from "react-router-dom";
+import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems, updateInventoryTableName } from "@/services/inventory-table-service";
+import { UpdateInventoryTableRequestType } from "@/types/api-request-types/update-inventory-table-request-type";
+import RemoveTableAlertDialog from "@/components/inventory-table/remove-table-alert-dialog";
+import UpdateTableNameDialog from "@/components/inventory-table/update-table-name-dialog";
 
 function InventoryTable() {
     const { tableName, id } = useParams();
 
+    const navigation = useNavigate();
+
     useEffect(() => {
-        const loadInventoryTable = async() =>{
-            if(id){
+        const loadInventoryTable = async () => {
+            if (id) {
                 const inventoryTable = await getInventoryTableById(id.toString());
                 setInventory(inventoryTable.items);
             }
@@ -50,9 +55,54 @@ function InventoryTable() {
     const [editingCell, setEditingCell] = useState({ row: null, column: null });
     const [editingColumn, setEditingColumn] = useState({ column: null });
 
-    // let columnEdited: string;
-    // let previousCellValue: any;
-    // let currentCellValue: any;
+    const [columnEdited, setColumnEdited] = useState<string>('');
+    const [previousValue, setPreviousValue] = useState<string>('');
+    const [currentValue, setCurrentValue] = useState<string>('');
+
+    function setEditedValues(column: string, previous: string, current: string) {
+        setColumnEdited(column);
+        setPreviousValue(previous);
+        setCurrentValue(current);
+    }
+
+    function removeEditedValues() {
+        setColumnEdited('');
+        setPreviousValue('');
+        setCurrentValue('');
+    }
+
+    //#region Chamadas para API
+
+    async function updateItems() {
+        console.log(columnEdited);
+
+        if (columnEdited === '' || previousValue === '' || currentValue === '') {
+            return;
+        }
+
+        if (id && tableName) {
+            const inventoryObject = Object.fromEntries(inventory);
+            console.log(inventoryObject);
+            const updateRequest = new UpdateInventoryTableRequestType(id, tableName, columnEdited, previousValue, currentValue, inventoryObject);
+            await updateInventoryTableItems(updateRequest);
+        }
+    }
+
+    async function updateTableName(newName: string) {
+        if (id && newName) {
+            await updateInventoryTableName(id, newName);
+            navigation(-1);
+        }
+    }
+
+    async function removeTable() {
+        if (id) {
+            await removeInventoryTable(id);
+            navigation(-1);
+        }
+    }
+
+    //#endregion
 
     //#region Manipuladores de alterações na tabela
 
@@ -87,9 +137,12 @@ function InventoryTable() {
             inventoryArray.splice(inventoryOldColumnIndex, 1, [newColumn, inventoryOldColumnData]);
 
             const map = new Map(inventoryArray);
+
+            setEditedValues(oldColumn, oldColumn, newColumn);
             setInventory(map);
         }
         else {
+            setEditedValues(oldColumn, oldColumn, newColumn);
             setInventory(inventoryMap);
         }
     };
@@ -103,9 +156,8 @@ function InventoryTable() {
         const columnData = updatedInventory.get(column);
 
         if (columnData) {
-            // columnEdited = column;
-            // previousCellValue = columnData[rowIndex];
-            // currentCellValue = value;
+            setEditedValues(column, columnData[rowIndex], value);
+
             columnData[rowIndex] = value;
             updatedInventory.set(column, columnData);
         }
@@ -183,7 +235,8 @@ function InventoryTable() {
         //Solução: alterar o nome da coluna apenas quando desfocar do input
         setEditingCell({ row: null, column: null });
         setEditingColumn({ column: null });
-        //Chamar Endpoint que irá atualizar os Itens da tabela
+        updateItems();
+        removeEditedValues();
     };
 
     function addNewColumn() {
@@ -323,9 +376,13 @@ function InventoryTable() {
                                 <CardHeader className="mb-4 h-28 w-full">
                                     <div className="flex items-center gap-5 w-[98%]">
                                         <CardTitle className="text-2xl font-bold">{tableName}</CardTitle>
-                                        <Pencil className="w-5 cursor-pointer" />
+                                        <UpdateTableNameDialog
+                                            onClickConfirmButton={(newName) => updateTableName(newName)}
+                                        />
                                         <div className="flex flex-1 justify-end">
-                                            <Button variant="destructive" className="w-40 h-8 bg opacity-90 text-white font-regular hover:opacity-100 hover:bg-red-600"><Trash />Excluir esta tabela</Button>
+                                            <RemoveTableAlertDialog
+                                                onClickConfirmButton={removeTable}
+                                            />
                                         </div>
                                     </div>
                                     <Button className="w-40 h-5 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><ClipboardPaste />Exportar excel</Button>
