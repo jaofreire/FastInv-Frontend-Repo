@@ -16,9 +16,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
 import { useNavigate, useParams } from "react-router-dom";
-import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems } from "@/services/inventory-table-service";
+import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems, updateInventoryTableName } from "@/services/inventory-table-service";
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/update-inventory-table-request-type";
 import RemoveTableAlertDialog from "@/components/inventory-table/remove-table-alert-dialog";
+import UpdateTableNameDialog from "@/components/inventory-table/update-table-name-dialog";
 
 function InventoryTable() {
     const { tableName, id } = useParams();
@@ -84,6 +85,13 @@ function InventoryTable() {
             console.log(inventoryObject);
             const updateRequest = new UpdateInventoryTableRequestType(id, tableName, columnEdited, previousValue, currentValue, inventoryObject);
             await updateInventoryTableItems(updateRequest);
+        }
+    }
+
+    async function updateTableName(newName: string) {
+        if (id && newName) {
+            await updateInventoryTableName(id, newName);
+            navigation(-1);
         }
     }
 
@@ -368,7 +376,9 @@ function InventoryTable() {
                                 <CardHeader className="mb-4 h-28 w-full">
                                     <div className="flex items-center gap-5 w-[98%]">
                                         <CardTitle className="text-2xl font-bold">{tableName}</CardTitle>
-                                        <Pencil className="w-5 cursor-pointer" />
+                                        <UpdateTableNameDialog
+                                            onClickConfirmButton={(newName) => updateTableName(newName)}
+                                        />
                                         <div className="flex flex-1 justify-end">
                                             <RemoveTableAlertDialog
                                                 onClickConfirmButton={removeTable}

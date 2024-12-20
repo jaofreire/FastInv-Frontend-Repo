@@ -85,6 +85,22 @@ export const putUpdateInventoryTableItems = async (request: UpdateInventoryTable
     return;
 }
 
+export const patchUpdateInventoryTableName = async (id: string, name: string) => {
+    await api.patch<ApiResponse<InventoryTableType>>('/InventoryTable/' + id, {
+        name: name
+    })
+    .then((response) => {
+        const responseData = response.data
+
+        if(responseData.isSuccess){
+            return;
+        }
+    })
+
+    return;
+
+}
+
 export const deleteInventoryTable = async (id: string) => {
     await api.delete<ApiResponse<InventoryTableType>>('/InventoryTable/' + id)
     .then((response) => {
