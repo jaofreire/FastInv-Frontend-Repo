@@ -1,8 +1,14 @@
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
-import { BadgePlus, Blend, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { Button } from "../ui/button";
-import { DialogHeader } from "../ui/dialog";
-import { Input } from "../ui/input";
+import { Blend, Check } from "lucide-react";
 import { useState } from "react";
 
 function MigrateExcelDialog({
@@ -24,7 +30,7 @@ function MigrateExcelDialog({
                 <DialogTrigger asChild>
                 <Button className="w-30 h-8 bg-slate-950 opacity-90 text-white font-semibold hover:opacity-100 hover:bg-slate-950"><Blend />Migrar tabela Excel</Button>
                 </DialogTrigger>
-                <DialogContent className="fixed w-4/12 h-[27%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-orange-600 rounded-lg shadow-lg p-6">
+                <DialogContent className="sm:max-w-[425px] bg-orange-600 border-black">
                     <DialogHeader>
                         <DialogTitle className="text-white text-xl font-bold">Migrar tabela</DialogTitle>
                         <DialogDescription className="text-white opacity-75">Selecione o arquivo Excel que deseja migrar para o sistema</DialogDescription>
