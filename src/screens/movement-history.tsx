@@ -8,8 +8,11 @@ import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover
 import { ArrowUpDown, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { format } from 'date-fns'
+import FilterOptions from "@/components/movement-history/filter-options";
 
 function MovementHistory() {
+
+    const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual']
 
     const [movementsHistory, setMovementsHistory] = useState<MovementHistoryType[]>([]);
 
@@ -46,48 +49,16 @@ function MovementHistory() {
                                     <Table className="overflow-x-auto">
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead className="w-[200px]">
-                                                    <Button variant="ghost" className="text-black bg-transparent">
-                                                        Usuário
-                                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </TableHead>
-                                                <TableHead>
-                                                    <Button variant="ghost" className="text-black bg-transparent">
-                                                        Tabela
-                                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </TableHead>
-                                                <TableHead>
-                                                    <Button variant="ghost" className="text-black bg-transparent">
-                                                        Ação
-                                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </TableHead>
-                                                <TableHead>
-                                                    <Button variant="ghost" className="text-black bg-transparent">
-                                                        Data/Hora
-                                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </TableHead>
-                                                <TableHead>
-                                                    <Button variant="ghost" className="text-black bg-transparent">
-                                                        Coluna alterada
-                                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </TableHead>
-                                                <TableHead>
-                                                    <Button variant="ghost" className="text-black bg-transparent">
-                                                        Valor anterior
-                                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </TableHead>
-                                                <TableHead>
-                                                    <Button variant="ghost" className="text-black bg-transparent">
-                                                        Valor atual
-                                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </TableHead>
+                                                {tableHeaders.map((headerName) => (
+                                                    <TableHead className="w-[200px]">
+                                                        <div className="flex">
+                                                            <Button variant="ghost" className="text-black bg-transparent">
+                                                                {headerName}
+                                                            </Button>
+                                                            <FilterOptions />
+                                                        </div>
+                                                    </TableHead>
+                                                ))}
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -95,14 +66,14 @@ function MovementHistory() {
                                                 <>
                                                     <TableRow key={item.id}>
                                                         <TableCell className="font-medium">{item.userName}</TableCell>
-                                                        <TableCell>{item.inventoryTableName}</TableCell>
-                                                        <TableCell>{item.eventType}</TableCell>
-                                                        <TableCell>
+                                                        <TableCell className="font-medium">{item.inventoryTableName}</TableCell>
+                                                        <TableCell className="font-medium">{item.eventType}</TableCell>
+                                                        <TableCell className="font-medium">
                                                             {formatTimestamp(item.occurredOn)}
                                                         </TableCell>
-                                                        <TableCell>{item.columnChanged}</TableCell>
-                                                        <TableCell>{item.previousValue}</TableCell>
-                                                        <TableCell>{item.currentValue}</TableCell>
+                                                        <TableCell className="font-medium">{item.columnChanged}</TableCell>
+                                                        <TableCell className="font-medium">{item.previousValue}</TableCell>
+                                                        <TableCell >{item.currentValue}</TableCell>
                                                     </TableRow>
                                                 </>
                                             ))}
