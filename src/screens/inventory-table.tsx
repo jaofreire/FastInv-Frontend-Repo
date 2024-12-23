@@ -28,6 +28,7 @@ function InventoryTable() {
 
     useEffect(() => {
         const loadInventoryTable = async () => {
+            {/* Tratar erro quando tentar buscar uma tabela que não exista mais, mostrar erro na tela */}
             if (id) {
                 const inventoryTable = await getInventoryTableById(id.toString());
                 setInventory(inventoryTable.items);

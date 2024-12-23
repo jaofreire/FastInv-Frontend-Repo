@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { format } from 'date-fns'
 import FilterOptions from "@/components/movement-history/filter-options";
 import { FilterX } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function MovementHistory() {
 
@@ -22,6 +24,8 @@ function MovementHistory() {
     };
 
     const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual']
+
+    const navigator = useNavigate();
 
     const [movementsHistory, setMovementsHistory] = useState<MovementHistoryType[]>([]);
 
@@ -63,7 +67,6 @@ function MovementHistory() {
 
     function handleFilterByCriteria(column: string, criteria: string, isContainFilter: boolean) {
         let filteredMovementsHistory: MovementHistoryType[] = [];
-
         const attribute = columnMapping[column];
 
         if (attribute) {
@@ -123,8 +126,11 @@ function MovementHistory() {
                                             {(isFilterMode ? filteredMovements : movementsHistory).map((movement, index) => (
                                                 <>
                                                     <TableRow key={index}>
+                                                        {/* Adicionar link direcionando para o perfil do usuário responsavel pela alteração */}
                                                         <TableCell>{movement.userName}</TableCell>
-                                                        <TableCell>{movement.inventoryTableName}</TableCell>
+                                                        <Link className="cursor-pointer" to={'/inventory-table/' + movement.inventoryTableName + '/' + movement.inventoryTableId}>
+                                                            <TableCell>{movement.inventoryTableName}</TableCell>
+                                                        </Link>
                                                         <TableCell>{movement.eventType}</TableCell>
                                                         <TableCell>
                                                             {formatTimestamp(movement.occurredOn)}
