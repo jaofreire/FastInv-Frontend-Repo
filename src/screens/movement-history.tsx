@@ -11,6 +11,16 @@ import { FilterX } from "lucide-react";
 
 function MovementHistory() {
 
+    const columnMapping: Record<string, keyof MovementHistoryType> = {
+        'Usuário': 'userName',
+        'Tabela': 'inventoryTableName',
+        'Ação': 'eventType',
+        'Data/Hora': 'occurredOn',
+        'Coluna alterada': 'columnChanged',
+        'Valor anterior': 'previousValue',
+        'Valor atual': 'currentValue',
+    };
+
     const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual']
 
     const [movementsHistory, setMovementsHistory] = useState<MovementHistoryType[]>([]);
@@ -21,7 +31,7 @@ function MovementHistory() {
 
     useEffect(() => {
         const loadMovementsHistory = async () => {
-            const loadedMovements = await getMovementsHistoryByCompanyId('e38bfaea-a2a9-4d05-ab9e-7ce9e0fd3af2');
+            const loadedMovements = await getMovementsHistoryByCompanyId('035b5700-abd7-4184-8be0-a38adfdd33a0');
             setMovementsHistory(loadedMovements);
         }
 
@@ -37,31 +47,34 @@ function MovementHistory() {
 
     //#region Manipuladores de filtros
 
-    function handleFilterByCriteria(column: string, criteria: string) {
+    function handleFilterByAlphabeticalOrder(isAscending: boolean, column: string) {
         let filteredMovementsHistory: MovementHistoryType[] = [];
-        switch (column) {
-            case 'Usuário':
-                filteredMovementsHistory = movementsHistory.filter(x => x.userName.includes(criteria));
-                break;
-            case 'Tabela':
-                filteredMovementsHistory = movementsHistory.filter(x => x.inventoryTableName.includes(criteria));
-                break;
-            case 'Ação':
-                filteredMovementsHistory = movementsHistory.filter(x => x.eventType.includes(criteria));
-                break;
-            case 'Data/Hora':
-                filteredMovementsHistory = movementsHistory.filter(x => x.occurredOn.includes(criteria));
-                break;
-            case 'Coluna alterada':
-                filteredMovementsHistory = movementsHistory.filter(x => x.columnChanged.includes(criteria));
-                break;
-            case 'Valor anterior':
-                filteredMovementsHistory = movementsHistory.filter(x => x.previousValue.includes(criteria));
-                break;
-            case 'Valor atual':
-                filteredMovementsHistory = movementsHistory.filter(x => x.currentValue.includes(criteria));
-                break;
+        const attribute = columnMapping[column];
+        const sortedMovements = [...movementsHistory].sort((a, b) =>
+            isAscending
+                ? a[attribute].localeCompare(b[attribute])
+                : b[attribute].localeCompare(a[attribute])
+        );
+        filteredMovementsHistory = sortedMovements;
+
+        setIsFilterMode(true);
+        setFilteredMovements(filteredMovementsHistory);
+    }
+
+    function handleFilterByCriteria(column: string, criteria: string, isContainFilter: boolean) {
+        let filteredMovementsHistory: MovementHistoryType[] = [];
+
+        const attribute = columnMapping[column];
+
+        if (attribute) {
+            filteredMovementsHistory = movementsHistory.filter(
+                x =>
+                    isContainFilter
+                        ? x[attribute].includes(criteria)
+                        : !x[attribute].includes(criteria)
+            );
         }
+
         setFilteredMovements(filteredMovementsHistory);
         setIsFilterMode(true);
     }
@@ -98,7 +111,8 @@ function MovementHistory() {
                                                                 {headerName}
                                                             </Button>
                                                             <FilterOptions
-                                                                onChangeFilterValue={(_, criteria) => handleFilterByCriteria(headerName, criteria)}
+                                                                onChangeFilterValue={(_, criteria, isContainFilter) => handleFilterByCriteria(headerName, criteria, isContainFilter)}
+                                                                onClickFilterByAlphabeticalOrder={(isAscending, _) => handleFilterByAlphabeticalOrder(isAscending, headerName)}
                                                             />
                                                         </div>
                                                     </TableHead>

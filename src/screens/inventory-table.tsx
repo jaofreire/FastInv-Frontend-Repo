@@ -263,6 +263,7 @@ function InventoryTable() {
         setIsFilterMode(false);
         const updatedTable = new Map<string, string[]>();
 
+        //Pode estar errado pois está fazendo o sort em todas as listas e não na que está sendo filtrada
         inventory.forEach((_, column) => {
             const columnData = inventory.get(column)
 

@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 function MyTables() {
     const [fetchedInventoryTables, setFetchedInventoryTables] = useState<InventoryTabelSummaryType[]>([]);
-    const companyId: string = 'e38bfaea-a2a9-4d05-ab9e-7ce9e0fd3af2';
+    const companyId: string = '035b5700-abd7-4184-8be0-a38adfdd33a0';
 
     useEffect(() => {
         const loadInventoryTablesSummary = async () => {
