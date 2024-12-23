@@ -2,7 +2,13 @@ import { Ellipsis } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Input } from "../ui/input";
 
-function FilterOptions() {
+function FilterOptions({
+    onChangeFilterValue
+}: {
+    onChangeFilterValue: (column: string, filterValue: string) => void;
+}) {
+
+
     return (
         <>
             <Popover>
@@ -19,6 +25,7 @@ function FilterOptions() {
                         className="bg-gray-200"
                         placeholder="Filtrar por valor"
                         type="text"
+                        onChange={(e) => onChangeFilterValue('', e.target.value)}
                     >
                     </Input>
                 </PopoverContent>
