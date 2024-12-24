@@ -28,6 +28,7 @@ function InventoryTable() {
 
     useEffect(() => {
         const loadInventoryTable = async () => {
+            {/* Tratar erro quando tentar buscar uma tabela que não exista mais, mostrar erro na tela */}
             if (id) {
                 const inventoryTable = await getInventoryTableById(id.toString());
                 setInventory(inventoryTable.items);
@@ -263,6 +264,7 @@ function InventoryTable() {
         setIsFilterMode(false);
         const updatedTable = new Map<string, string[]>();
 
+        //Pode estar errado pois está fazendo o sort em todas as listas e não na que está sendo filtrada
         inventory.forEach((_, column) => {
             const columnData = inventory.get(column)
 
