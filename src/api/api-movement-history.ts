@@ -11,3 +11,13 @@ export const fetchMovementsHistoryByCompanyId = async (companyId: string): Promi
 
     return data;
 }
+
+export const fetchLatestTenMovementsHistoryByCompanyId = async(companyId: string) : Promise<MovementHistoryType[]> => {
+    const data = await api.get<ApiResponse<MovementHistoryType>>('/MovementHistoryEvent/latest-ten/company/' + companyId)
+        .then((response) => {
+            const responseData = response.data;
+            return responseData.responseList;
+        });
+
+    return data;
+}

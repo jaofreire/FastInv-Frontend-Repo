@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { format } from 'date-fns'
 import FilterOptions from "@/components/movement-history/filter-options";
 import { FilterX } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 function MovementHistory() {
@@ -24,8 +23,6 @@ function MovementHistory() {
     };
 
     const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual']
-
-    const navigator = useNavigate();
 
     const [movementsHistory, setMovementsHistory] = useState<MovementHistoryType[]>([]);
 
