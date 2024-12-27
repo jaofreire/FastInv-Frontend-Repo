@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { login } from "@/services/auth-service";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -23,9 +24,13 @@ function SignIn() {
         }
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Login válido!!");
-        navigator('/main-page');
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const loginResponse = await login(values.email, values.password);
+
+        if (loginResponse) {
+            console.log("Login válido!!");
+            navigator('/main-page');
+        };
     }
 
     return (
