@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { login } from "@/services/auth-service";
+import { saveUserDataGlobalState } from "@/services/user-service";
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/auth/auth-provider";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -14,6 +17,9 @@ const formSchema = z.object({
 })
 
 function SignIn() {
+
+    const { Login } = useContext(AuthContext);
+
     const navigator = useNavigate()
 
     const formControl = useForm<z.infer<typeof formSchema>>({
@@ -28,7 +34,7 @@ function SignIn() {
         const loginResponse = await login(values.email, values.password);
 
         if (loginResponse) {
-            console.log("Login válido!!");
+            await saveUserDataGlobalState(loginResponse.token, Login);
             navigator('/main-page');
         };
     }

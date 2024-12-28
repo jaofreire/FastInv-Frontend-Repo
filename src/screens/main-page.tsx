@@ -1,20 +1,20 @@
 import { Table2, TableCellsMerge, Users } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import SideBar from '@/components/Global/sidebar';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { getMainInfos } from '@/services/main-info-service';
 import { MovementHistoryType } from '@/types/api-response-types/movement-history/movement-history-type';
 import { getLatestTenMovementsHistoryByCompanyId } from '@/services/movement-history-service';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { AuthContext } from '@/contexts/auth/auth-provider';
 
 function MainPage() {
 
     const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual'];
 
-    const companyId = '035b5700-abd7-4184-8be0-a38adfdd33a0';
+    const { CompanyId } = useContext(AuthContext);
 
     const [inventoryTableCount, setInventoryTableCount] = useState<number>(0);
     const [employersCount, setEmployersCount] = useState<number>(0);
@@ -25,7 +25,7 @@ function MainPage() {
 
     useEffect(() => {
         const loadMainInfo = async () => {
-            const infos = await getMainInfos(companyId);
+            const infos = await getMainInfos(CompanyId);
 
             setInventoryTableCount(infos.inventoryTableCount);
             setEmployersCount(infos.emplooyersCont);
@@ -33,7 +33,7 @@ function MainPage() {
         }
 
         const loadLatestTenMovementsHistory = async () => {
-            const movementsHistory = await getLatestTenMovementsHistoryByCompanyId(companyId);
+            const movementsHistory = await getLatestTenMovementsHistoryByCompanyId(CompanyId);
             setLatestTenMovementsHistory(movementsHistory);
         }
 
