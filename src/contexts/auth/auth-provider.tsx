@@ -40,7 +40,12 @@ export function AuthProvider({
         const tryPreviousLogin = async () => {
             const token = getCookie('token');
             if (token) {
-                await saveUserDataGlobalState(token, logIn);
+                const isSavedData = await saveUserDataGlobalState(token, logIn);
+
+                if (!isSavedData) {
+                    setIsLoading(false);
+                    return;
+                }
             }
             setIsLoading(false);
         }
@@ -76,7 +81,7 @@ export function AuthProvider({
     }
 
     if (isLoading) {
-        return <div>CARREGANDO...</div>
+        return <div>Carregando...</div>
     }
 
     return (

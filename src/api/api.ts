@@ -1,3 +1,4 @@
+import { getCookie } from '@/utils/cookie-handler';
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 const api = axios.create({
@@ -20,5 +21,15 @@ api.interceptors.response.use(
         return Promise.reject(error);
     } 
 )
+
+api.interceptors.request.use((config) => {
+    const tokenCookie = getCookie('token');
+
+    if (tokenCookie && config.headers) {
+        config.headers['Authorization'] = `Bearer ${tokenCookie}`;
+    }
+
+    return config;
+});
 
 export default api;
