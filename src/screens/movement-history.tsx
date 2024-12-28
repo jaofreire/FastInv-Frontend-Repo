@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "@/components/ui/table";
 import { getMovementsHistoryByCompanyId } from "@/services/movement-history-service";
 import { MovementHistoryType } from "@/types/api-response-types/movement-history/movement-history-type";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { format } from 'date-fns'
 import FilterOptions from "@/components/movement-history/filter-options";
 import { FilterX } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { AuthContext } from "@/contexts/auth/auth-provider";
 
 function MovementHistory() {
 
@@ -23,9 +23,9 @@ function MovementHistory() {
         'Valor atual': 'currentValue',
     };
 
-    const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual']
+    const { CompanyId } = useContext(AuthContext);
 
-    const navigator = useNavigate();
+    const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual']
 
     const [movementsHistory, setMovementsHistory] = useState<MovementHistoryType[]>([]);
 
@@ -35,7 +35,7 @@ function MovementHistory() {
 
     useEffect(() => {
         const loadMovementsHistory = async () => {
-            const loadedMovements = await getMovementsHistoryByCompanyId('035b5700-abd7-4184-8be0-a38adfdd33a0');
+            const loadedMovements = await getMovementsHistoryByCompanyId(CompanyId);
             setMovementsHistory(loadedMovements);
         }
 

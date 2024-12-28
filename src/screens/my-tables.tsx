@@ -3,18 +3,20 @@ import CreateNewInventoryTableDialog from "@/components/my-tables/create-new-inv
 import MigrateExcelDialog from "@/components/my-tables/migrate-excel-dialog";
 import TableCard from "@/components/my-tables/table-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthContext } from "@/contexts/auth/auth-provider";
 import { getInventoryTablesByCompanyId, migrateExcel, registerNewInventoryTable } from "@/services/inventory-table-service";
 import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table/inventory-table-summary-type";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function MyTables() {
+    const { CompanyId } = useContext(AuthContext);
+    
     const [fetchedInventoryTables, setFetchedInventoryTables] = useState<InventoryTabelSummaryType[]>([]);
-    const companyId: string = '035b5700-abd7-4184-8be0-a38adfdd33a0';
 
     useEffect(() => {
         const loadInventoryTablesSummary = async () => {
-            const inventoryTables = await getInventoryTablesByCompanyId(companyId);
+            const inventoryTables = await getInventoryTablesByCompanyId(CompanyId);
             setFetchedInventoryTables(inventoryTables);
         }
 
@@ -22,7 +24,7 @@ function MyTables() {
     }, []);
 
     async function createNewInventoryTable(name: string) {
-        await registerNewInventoryTable(companyId, name);
+        await registerNewInventoryTable(CompanyId, name);
         window.location.reload();
     }
 
@@ -34,7 +36,7 @@ function MyTables() {
         }
 
         formData.append('file', excelFile);
-        await migrateExcel(companyId, formData);
+        await migrateExcel(CompanyId, formData);
         window.location.reload();
     }
 
