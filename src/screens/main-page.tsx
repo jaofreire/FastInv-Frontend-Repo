@@ -14,7 +14,7 @@ function MainPage() {
 
     const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual'];
 
-    const { CompanyId } = useContext(AuthContext);
+    const { CompanyId, UserName } = useContext(AuthContext);
 
     const [inventoryTableCount, setInventoryTableCount] = useState<number>(0);
     const [employersCount, setEmployersCount] = useState<number>(0);
@@ -59,8 +59,9 @@ function MainPage() {
                         <div className="flex items-center gap-4">
                             <div className="h-8 w-8 rounded-full bg-purple-100" />
                             <div>
+                                {/* Exibir CompanyName do usuário autenticado */}
                                 <div className="text-sm text-gray-500">Joao Soluções LTDA</div>
-                                <div className="font-medium">Bem-Vindo, João</div>
+                                <div className="font-medium">Bem-Vindo, {UserName}</div>
                             </div>
                         </div>
                     </header>
