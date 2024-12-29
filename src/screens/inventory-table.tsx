@@ -60,9 +60,8 @@ function InventoryTable() {
     const [previousValue, setPreviousValue] = useState<string>('');
     const [currentValue, setCurrentValue] = useState<string>('');
 
-    function setEditedValues(column: string, previous: string, current: string) {
+    function setEditedValues(column: string, current: string) {
         setColumnEdited(column);
-        setPreviousValue(previous);
         setCurrentValue(current);
     }
 
@@ -109,10 +108,14 @@ function InventoryTable() {
 
     function handleEdit(row: any, column: any) {
         setEditingCell({ row, column });
+
+        const columnData = inventory.get(column);
+        setPreviousValue(columnData![row]);
     };
 
     function handleEditColumn(column: any) {
         setEditingColumn({ column })
+        setPreviousValue(column);
     };
 
     function handleColumnValueChange(oldColumn: string, newColumn: string) {
@@ -139,11 +142,11 @@ function InventoryTable() {
 
             const map = new Map(inventoryArray);
 
-            setEditedValues(oldColumn, oldColumn, newColumn);
+            setEditedValues(oldColumn, newColumn);
             setInventory(map);
         }
         else {
-            setEditedValues(oldColumn, oldColumn, newColumn);
+            setEditedValues(oldColumn, newColumn);
             setInventory(inventoryMap);
         }
     };
@@ -157,7 +160,7 @@ function InventoryTable() {
         const columnData = updatedInventory.get(column);
 
         if (columnData) {
-            setEditedValues(column, columnData[rowIndex], value);
+            setEditedValues(column, value);
 
             columnData[rowIndex] = value;
             updatedInventory.set(column, columnData);

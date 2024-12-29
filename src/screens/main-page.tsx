@@ -59,7 +59,7 @@ function MainPage() {
                         <div className="flex items-center gap-4">
                             <div className="h-8 w-8 rounded-full bg-purple-100" />
                             <div>
-                                <div className="text-sm text-gray-500">LVA TRANSPORTE</div>
+                                <div className="text-sm text-gray-500">Joao Soluções LTDA</div>
                                 <div className="font-medium">Bem-Vindo, João</div>
                             </div>
                         </div>
