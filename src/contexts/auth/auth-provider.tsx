@@ -1,7 +1,31 @@
 import { saveUserDataGlobalState } from "@/services/user-service";
-import { AuthUserContextType } from "@/types/auth-types/auth-user-context-type";
 import { getCookie } from "@/utils/cookie-handler";
 import { createContext, useEffect, useState } from "react"
+
+export interface AuthUserContextType {
+    IsLogged: boolean;
+    Id: string;
+    CompanyId: string;
+    UserName: string;
+    CompanyName: string;
+    Department: string;
+    Email: string;
+    PhoneNumber: string;
+    Role: string;
+    CreatedAt: string;
+    Login: (
+        id: string,
+        companyId: string,
+        userName: string,
+        companyName: string,
+        department: string,
+        email: string,
+        phoneNumber: string,
+        role: string,
+        createdAt: string
+    ) => void;
+    Logout: () => void;
+}
 
 export const AuthContext = createContext<AuthUserContextType>({
     IsLogged: false,
@@ -11,7 +35,20 @@ export const AuthContext = createContext<AuthUserContextType>({
     CompanyName: '',
     Department: '',
     Email: '',
-    Login(id, companyId, userName, companyName, department, email) {
+    PhoneNumber: '',
+    Role: '',
+    CreatedAt: '',
+    Login(
+        id,
+        companyId,
+        userName,
+        companyName,
+        department,
+        email,
+        phoneNumber,
+        role,
+        createdAt
+    ) {
     },
     Logout() {
     },
@@ -30,6 +67,9 @@ export function AuthProvider({
         CompanyName: '',
         Department: '',
         Email: '',
+        PhoneNumber: '',
+        Role: '',
+        CreatedAt: '',
         Login: logIn,
         Logout: logOut
     });
@@ -53,7 +93,17 @@ export function AuthProvider({
         tryPreviousLogin();
     }, []);
 
-    function logIn(id: string, companyId: string, userName: string, companyName: string, department: string, email: string) {
+    function logIn(
+        id: string,
+        companyId: string,
+        userName: string,
+        companyName: string,
+        department: string,
+        email: string,
+        phoneNumber: string,
+        role: string,
+        createdAt: string
+    ) {
         setUserState((prevState) => ({
             ...prevState,
             IsLogged: true,
@@ -62,7 +112,10 @@ export function AuthProvider({
             UserName: userName,
             CompanyName: companyName,
             Department: department,
-            Email: email
+            Email: email,
+            PhoneNumber: phoneNumber,
+            Role: role,
+            CreatedAt: createdAt
         }));
         console.log('Login feito por ' + userName);
     }
@@ -76,7 +129,10 @@ export function AuthProvider({
             UserName: '',
             CompanyName: '',
             Department: '',
-            Email: ''
+            Email: '',
+            PhoneNumber: '',
+            Role: '',
+            CreatedAt: ''
         }));
     }
 

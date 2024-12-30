@@ -8,6 +8,7 @@ import MyTables from './screens/my-tables.tsx'
 import MovementHistory from './screens/movement-history.tsx'
 import { AuthProvider } from './contexts/auth/auth-provider.tsx'
 import ProtectedRoute from './route/protected-route.tsx'
+import UserProfile from './screens/user-profile.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <AuthProvider>
@@ -18,6 +19,11 @@ createRoot(document.getElementById('root')!).render(
         <Route path='/main-page' element={
           <ProtectedRoute>
             <MainPage />
+          </ProtectedRoute>} />
+
+        <Route path='/user-profile' element={
+          <ProtectedRoute>
+            <UserProfile />
           </ProtectedRoute>} />
 
         <Route path='/my-tables' element={
@@ -34,7 +40,7 @@ createRoot(document.getElementById('root')!).render(
           <ProtectedRoute>
             <MovementHistory />
           </ProtectedRoute>
-          
+
         } />
       </Routes>
     </BrowserRouter >

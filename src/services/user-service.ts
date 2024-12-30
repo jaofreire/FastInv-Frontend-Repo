@@ -8,25 +8,43 @@ interface UserDataJwtPayload extends JwtPayload {
     role: string;
 }
 
-export const saveUserDataGlobalState = async (token: string, login: (id: string, companyId: string, userName: string, companyName: string, department: string, email: string) => void)
+export const saveUserDataGlobalState = async (token: string,
+    login: (
+        id: string,
+        companyId: string,
+        userName: string,
+        companyName: string,
+        department: string,
+        email: string,
+        phoneNumber: string,
+        role: string,
+        createdAt: string
+    ) => void
+)
     : Promise<boolean> => {
     const decodeJwt = jwtDecode<UserDataJwtPayload>(token);
     const id = decodeJwt.nameid;
 
     if (decodeJwt.exp) {
-        console.log('Existe data de expiração')
-        console.log(decodeJwt.exp);
-        if (!jwtTokenExpireValidate(decodeJwt.exp)) {
-            console.log('Token expirado')
+        if (jwtTokenExpireValidate(decodeJwt.exp) === false) {
             deleteCookie('token');
-
             return false;
         }
 
     }
 
     const response = await fetchUserById(id);
-    login(response.id, response.companyId, response.name, '', response.department, response.email);
+    login(
+        response.id,
+        response.companyId,
+        response.name,
+        '',
+        response.department,
+        response.email,
+        response.phoneNumber,
+        response.role,
+        response.createdAt
+    );
 
     return true;
 }
