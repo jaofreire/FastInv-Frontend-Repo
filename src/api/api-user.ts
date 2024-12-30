@@ -11,3 +11,7 @@ export const fetchUserById = async (id: string): Promise<UserType> => {
 
     return data;
 }
+
+// export const fetchUsersByCompanyId = async (companyId: string): Promise<UserType[]> => {
+
+// }

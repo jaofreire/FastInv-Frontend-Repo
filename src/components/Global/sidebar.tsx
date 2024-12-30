@@ -1,4 +1,4 @@
-import { BellRing, Home, List, LogOut, MessageSquare, Table } from 'lucide-react'
+import { BellRing, Home, List, LogOut, MessageSquare, Table, Users } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom";
 import { useContext } from 'react';
@@ -34,6 +34,12 @@ function SideBar() {
                         to={'/my-tables'}>
                         <Table className="h-4 w-4" />
                         Suas tabelas
+                    </Link>
+                    <Link
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900"
+                        to={'/employees'}>
+                        <Users className="h-4 w-4" />
+                        Funcionários
                     </Link>
                     <Link
                         className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900"
