@@ -5,7 +5,7 @@ export interface UserType {
     department: string;
     email: string;
     passwordHash: string;
-    phoneNumbe: string;
+    phoneNumber: string;
     role: string;
     createdAt: string;
 }

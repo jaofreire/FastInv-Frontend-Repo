@@ -1,11 +1,11 @@
 export class MainInfoType{
     inventoryTableCount: number;
-    emplooyersCont: number;
+    emplooyersCount: number;
     lastInventoryTableUpdated: string;
 
-    constructor(inventoryTableCount: number, emplooyersCont: number, lastInventoryTableUpdated: string){
+    constructor(inventoryTableCount: number, emplooyersCount: number, lastInventoryTableUpdated: string){
         this.inventoryTableCount = inventoryTableCount;
-        this.emplooyersCont = emplooyersCont;
+        this.emplooyersCount = emplooyersCount;
         this.lastInventoryTableUpdated = lastInventoryTableUpdated;
     }
 }

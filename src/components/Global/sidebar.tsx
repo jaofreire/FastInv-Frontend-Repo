@@ -1,8 +1,19 @@
 import { BellRing, Home, List, LogOut, MessageSquare, Table } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom";
+import { useContext } from 'react';
+import { AuthContext } from '@/contexts/auth/auth-provider';
+import { deleteCookie } from '@/utils/cookie-handler';
+import { AlertDialog, AlertDialogHeader, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from '../ui/alert-dialog';
 
 function SideBar() {
+    const { Logout } = useContext(AuthContext);
+
+    function logOut() {
+        Logout();
+        deleteCookie('token');
+    }
+
     return (
         <>
             <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-white">
@@ -44,10 +55,31 @@ function SideBar() {
                         <BellRing className="h-4 w-4" />
                         Relate um problema
                     </Link>
-                    <Button className="mt-4 w-full" variant="outline">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sair da conta
-                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button
+                                className="mt-4 w-full" variant="outline">
+                                <LogOut className="mr-2 h-4 w-4" />
+                                Sair da conta
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-orange-600 border-black">
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Sair da conta</AlertDialogTitle>
+                                <AlertDialogDescription className="text-black">
+                                    Tem certeza que deseja sair da sua conta?
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogAction
+                                    onClick={() => logOut()}
+                                >
+                                    Confirmar
+                                </AlertDialogAction>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </aside>
         </>
