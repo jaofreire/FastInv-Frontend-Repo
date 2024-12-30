@@ -28,7 +28,7 @@ function MainPage() {
             const infos = await getMainInfos(CompanyId);
 
             setInventoryTableCount(infos.inventoryTableCount);
-            setEmployersCount(infos.emplooyersCont);
+            setEmployersCount(infos.emplooyersCount);
             setLastInventoryTableUpdated(infos.lastInventoryTableUpdated);
         }
 
