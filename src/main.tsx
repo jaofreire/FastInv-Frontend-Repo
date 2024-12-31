@@ -8,6 +8,8 @@ import MyTables from './screens/my-tables.tsx'
 import MovementHistory from './screens/movement-history.tsx'
 import { AuthProvider } from './contexts/auth/auth-provider.tsx'
 import ProtectedRoute from './route/protected-route.tsx'
+import UserProfile from './screens/user-profile.tsx'
+import AllUsers from './screens/all-users.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <AuthProvider>
@@ -20,9 +22,19 @@ createRoot(document.getElementById('root')!).render(
             <MainPage />
           </ProtectedRoute>} />
 
+        <Route path='/user-profile' element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>} />
+
         <Route path='/my-tables' element={
           <ProtectedRoute>
             <MyTables />
+          </ProtectedRoute>} />
+
+        <Route path='/employees' element={
+          <ProtectedRoute>
+            <AllUsers />
           </ProtectedRoute>} />
 
         <Route path='/inventory-table/:tableName/:id' element={
@@ -34,7 +46,7 @@ createRoot(document.getElementById('root')!).render(
           <ProtectedRoute>
             <MovementHistory />
           </ProtectedRoute>
-          
+
         } />
       </Routes>
     </BrowserRouter >
