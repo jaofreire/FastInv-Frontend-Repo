@@ -1,4 +1,4 @@
-import { fetchUserById } from '@/api/api-user';
+import { fetchUserById, fetchUsersByCompanyId } from '@/api/api-user';
 import { deleteCookie } from '@/utils/cookie-handler';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
@@ -55,4 +55,9 @@ const jwtTokenExpireValidate = (expireDate: number): boolean => {
     console.log(currentTime)
 
     return currentTime < expireDate;
+}
+
+export const getUsersByCompanyId = async (companyId: string) => {
+    const response = await fetchUsersByCompanyId(companyId);
+    return response;
 }

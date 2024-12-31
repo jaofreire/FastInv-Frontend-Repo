@@ -1,17 +1,29 @@
 import UserCard from "@/components/all-users/user-card";
 import SideBar from "@/components/Global/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthContext } from "@/contexts/auth/auth-provider";
+import { getUsersByCompanyId } from "@/services/user-service";
+import { UserType } from "@/types/api-response-types/user/user-type";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const users = [
-    { id: 1, name: "Jane Doe", role: "Senior Software Engineer", avatarUrl: "/placeholder.svg?height=40&width=40" },
-    { id: 2, name: "John Smith", role: "Product Manager", avatarUrl: "/placeholder.svg?height=40&width=40" },
-    { id: 3, name: "Alice Johnson", role: "UX Designer", avatarUrl: "/placeholder.svg?height=40&width=40" },
-]
 
 function AllUsers() {
+    const [users, setUsers] = useState<UserType[]>([]);
+
+    const { CompanyId } = useContext(AuthContext);
+
+    useEffect(() => {
+        const loadUsers = async () => {
+            const response = await getUsersByCompanyId(CompanyId);
+            setUsers(response);
+        }
+
+        loadUsers();
+    }, []);
+
+
     return (
         <>
             <SideBar />
@@ -23,7 +35,7 @@ function AllUsers() {
                                 <CardHeader className="flex mb-5 w-full h-28 ">
                                     <div className="flex w-full h-full">
                                         <div className="w-full">
-                                            <CardTitle className="pt-5 pl-10 text-3xl font-bold">Suas <span className="text-orange-400">Tabelas</span>:</CardTitle>
+                                            <CardTitle className="pt-5 pl-10 text-3xl font-bold">Funci<span className="text-orange-400">onários</span>:</CardTitle>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -31,7 +43,7 @@ function AllUsers() {
                             <CardContent className="flex flex-col items-center gap-5 w-full h-full justify-start">
                                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                     {users.map((user) => (
-                                        <UserCard avatar={user.avatarUrl} name={user.name} department={user.role} key={user.id} />
+                                        <UserCard name={user.name} department={user.department} key={user.id} />
                                     ))}
                                 </div>
                             </CardContent>
