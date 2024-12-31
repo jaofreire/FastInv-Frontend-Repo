@@ -43,7 +43,11 @@ function AllUsers() {
                             <CardContent className="flex flex-col items-center gap-5 w-full h-full justify-start">
                                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                     {users.map((user) => (
-                                        <UserCard name={user.name} department={user.department} key={user.id} />
+                                        <>
+                                            <Link to={'/user-profile/' + user.id}>
+                                                <UserCard name={user.name} department={user.department} key={user.id} />
+                                            </Link>
+                                        </>
                                     ))}
                                 </div>
                             </CardContent>

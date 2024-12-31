@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { Avatar, AvatarFallback } from "../ui/avatar"
 import { Card, CardContent } from "../ui/card"
 
 function UserCard({
@@ -10,7 +10,7 @@ function UserCard({
 }) {
     return (
         <>
-            <Card className="w-full max-w-sm cursor-pointer">
+            <Card className="w-full max-w-sm cursor-pointer" >
                 <CardContent className="flex items-center space-x-4 p-4">
                     <Avatar>
                         <AvatarFallback>{name.charAt(0)}</AvatarFallback>

@@ -1,68 +1,72 @@
 import { AuthContext } from "@/contexts/auth/auth-provider";
-import { useContext, useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Mail, Phone, Building2, UserCircle, Users, Calendar } from 'lucide-react'
+import { useContext, useEffect, useState } from "react";
 import SideBar from "@/components/Global/sidebar";
-import { format } from 'date-fns';
+import UserProfileCard from "@/components/Global/user-profile-card";
+import { useParams } from "react-router-dom";
+import { getUserById } from "@/services/user-service";
 
 function UserProfile() {
-    const { UserName, Department, Email, PhoneNumber, Role, CreatedAt } = useContext(AuthContext);
+
+    const { id } = useParams();
+    const authContext = useContext(AuthContext);
+
+    const [userName, setUserName] = useState<string>('');
+    const [department, setDepartment] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [phoneNumber, setPhoneNumber] = useState<string>('');
+    const [role, setRole] = useState<string>('');
+    const [createdAt, setCreatedAt] = useState<string>('');
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (id) {
+            loadUser(id);
+            return;
+        }
+
+        setUserData();
+        setIsLoading(false);
+        return;
+    })
+
+    async function loadUser(id: string) {
+        const response = await getUserById(id);
+        if (response) {
+            setUserName(response.name);
+            setDepartment(response.department);
+            setEmail(response.email);
+            setPhoneNumber(response.phoneNumber);
+            setRole(response.role);
+            setCreatedAt(response.createdAt);
+            setIsLoading(false);
+        }
+    }
+
+    function setUserData() {
+        setUserName(authContext.UserName);
+        setDepartment(authContext.Department);
+        setEmail(authContext.Email);
+        setPhoneNumber(authContext.PhoneNumber);
+        setRole(authContext.Role);
+        setCreatedAt(authContext.CreatedAt);
+    }
+
+    if(isLoading){
+        return <div>Carregando</div>
+    }
 
     return (
         <>
             <SideBar />
-            <div className="flex flex-col md:flex-row h-screen w-screen justify-center items-center">
-                <main className="flex items-center justify-center p-8 pl-64">
-                    <div className="w-full flex justify-center items-center">
-                        <Card className="shadow-lg w-full h-full flex justify-center items-center">
-                            <CardContent className="p-6 w-[500px]">
-                                <div className="flex flex-col items-center mb-8">
-                                    <Avatar className="w-32 h-32 mb-4">
-                                    </Avatar>
-                                    <h1 className="text-2xl font-bold">{UserName}</h1>
-                                    <p className="text-muted-foreground">{Role}</p>
-                                </div>
-
-                                <div className="space-y-6">
-                                    <div className="flex items-center space-x-4">
-                                        <Building2 className="w-5 h-5 text-muted-foreground" />
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Departamento</p>
-                                            <p className="font-medium">{Department}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center space-x-4">
-                                        <Mail className="w-5 h-5 text-muted-foreground" />
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Email</p>
-                                            <p className="font-medium">{Email}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center space-x-4">
-                                        <Phone className="w-5 h-5 text-muted-foreground" />
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Número celular</p>
-                                            <p className="font-medium">{PhoneNumber}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center space-x-4">
-                                        <Calendar className="w-5 h-5 text-muted-foreground" />
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Desde</p>
-                                            <p className="font-medium">{format(CreatedAt, 'dd/MM/yyyy')}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </main>
-            </div>
+            <UserProfileCard
+                UserName={userName}
+                Role={role}
+                Department={department}
+                Email={email}
+                PhoneNumber={phoneNumber}
+                CreatedAt={createdAt}
+            />
         </>
     );
 }
