@@ -64,7 +64,7 @@ function MainPage() {
                                 <div className="font-medium">Bem-Vindo, {UserName}</div>
                             </div>
                             <div className='flex-1'>
-                                <Link to={'/user-profile'}>
+                                <Link to={'/user-profile/'}>
                                     <Button className='bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500'>Visualizar perfil</Button>
                                 </Link>
                             </div>

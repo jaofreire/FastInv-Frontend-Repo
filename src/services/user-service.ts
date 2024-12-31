@@ -1,7 +1,9 @@
 import { fetchUserById, fetchUsersByCompanyId } from '@/api/api-user';
+import { UserType } from '@/types/api-response-types/user/user-type';
 import { deleteCookie } from '@/utils/cookie-handler';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
+//Futuramente separar tarefas que envolvem JWT em um jwt-utils
 interface UserDataJwtPayload extends JwtPayload {
     nameid: string;
     unique_name: string;
@@ -57,7 +59,13 @@ const jwtTokenExpireValidate = (expireDate: number): boolean => {
     return currentTime < expireDate;
 }
 
+export const getUserById = async (id: string) : Promise<UserType> => {
+    const response = await fetchUserById(id);
+    return response;
+}
+
 export const getUsersByCompanyId = async (companyId: string) => {
     const response = await fetchUsersByCompanyId(companyId);
     return response;
 }
+

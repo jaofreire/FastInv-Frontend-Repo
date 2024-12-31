@@ -22,7 +22,7 @@ createRoot(document.getElementById('root')!).render(
             <MainPage />
           </ProtectedRoute>} />
 
-        <Route path='/user-profile' element={
+        <Route path='/user-profile/:id?' element={
           <ProtectedRoute>
             <UserProfile />
           </ProtectedRoute>} />

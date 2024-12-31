@@ -2,15 +2,21 @@ import UserCard from "@/components/all-users/user-card";
 import SideBar from "@/components/Global/sidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { AuthContext } from "@/contexts/auth/auth-provider";
 import { getUsersByCompanyId } from "@/services/user-service";
 import { UserType } from "@/types/api-response-types/user/user-type";
+import { FilterX } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 
 function AllUsers() {
     const [users, setUsers] = useState<UserType[]>([]);
+
+    const [filteredUsers, setFilteredUsers] = useState<UserType[]>([]);
+
+    const [isFilterMode, setIsFilter] = useState<boolean>(false);
 
     const { CompanyId } = useContext(AuthContext);
 
@@ -23,6 +29,17 @@ function AllUsers() {
         loadUsers();
     }, []);
 
+    function handleFilterByName(name: string) {
+        const filterApplied = users.filter(x => x.name.includes(name));
+        setFilteredUsers(filterApplied);
+
+        setIsFilter(true);
+    }
+
+    function removeFilters(){
+        setFilteredUsers([]);
+        setIsFilter(false);
+    }
 
     return (
         <>
@@ -34,16 +51,27 @@ function AllUsers() {
                             <div className="flex flex-col">
                                 <CardHeader className="flex mb-5 w-full h-28 ">
                                     <div className="flex w-full h-full">
-                                        <div className="w-full">
-                                            <CardTitle className="pt-5 pl-10 text-3xl font-bold">Funci<span className="text-orange-400">onários</span>:</CardTitle>
+                                        <div className="w-full pt-5 pl-10">
+                                            <CardTitle className=" text-3xl font-bold">Funci<span className="text-orange-400">onários</span>:</CardTitle>
+                                            {isFilterMode && <Button className="w-40 h-5 bg-red-500 opacity-90 text-white font-medium rounded-sm hover:opacity-100 hover:bg-red-600" onClick={removeFilters}><FilterX />Remover filtros</Button>}
                                         </div>
                                     </div>
                                 </CardHeader>
                             </div>
                             <CardContent className="flex flex-col items-center gap-5 w-full h-full justify-start">
+                                <Input
+                                    className="w-[30%] border-collapse border-black shadow-black"
+                                    type="text"
+                                    placeholder="Pesquisar funcionários"
+                                    onChange={(e) => handleFilterByName(e.target.value)}
+                                />
                                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                    {users.map((user) => (
-                                        <UserCard name={user.name} department={user.department} key={user.id} />
+                                    {(isFilterMode ? filteredUsers : users).map((user) => (
+                                        <>
+                                            <Link to={'/user-profile/' + user.id}>
+                                                <UserCard name={user.name} department={user.department} key={user.id} />
+                                            </Link>
+                                        </>
                                     ))}
                                 </div>
                             </CardContent>
