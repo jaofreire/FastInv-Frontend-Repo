@@ -1,8 +1,6 @@
 import { Building2, Calendar, Mail, Phone } from "lucide-react";
-import { Avatar, AvatarImage } from "../ui/avatar";
 import { Card, CardContent } from "../ui/card";
 import { format } from "date-fns";
-import { AvatarFallback } from "@radix-ui/react-avatar";
 
 function UserProfileCard({
     UserName,

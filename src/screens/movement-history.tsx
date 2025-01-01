@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { format } from 'date-fns'
 import FilterOptions from "@/components/movement-history/filter-options";
 import { FilterX } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/contexts/auth/auth-provider";
 
 function MovementHistory() {
@@ -24,6 +24,8 @@ function MovementHistory() {
     };
 
     const { CompanyId } = useContext(AuthContext);
+
+    const navigator = useNavigate();
 
     const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual']
 
@@ -127,10 +129,18 @@ function MovementHistory() {
                                                 <>
                                                     <TableRow key={index}>
                                                         {/* Adicionar link direcionando para o perfil do usuário responsavel pela alteração */}
-                                                        <TableCell>{movement.userName}</TableCell>
-                                                        <Link className="cursor-pointer" to={'/inventory-table/' + movement.inventoryTableName + '/' + movement.inventoryTableId}>
-                                                            <TableCell>{movement.inventoryTableName}</TableCell>
-                                                        </Link>
+                                                        <TableCell
+                                                            className='cursor-pointer text-blue-500'
+                                                            onClick={() => navigator('/user-profile/' + movement.userId)}
+                                                        >
+                                                            {movement.userName}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            className='cursor-pointer text-blue-500'
+                                                            onClick={() => navigator('/inventory-table/' + movement.inventoryTableName + '/' + movement.inventoryTableId)}
+                                                        >
+                                                            {movement.inventoryTableName}
+                                                        </TableCell>
                                                         <TableCell>{movement.eventType}</TableCell>
                                                         <TableCell>
                                                             {formatTimestamp(movement.occurredOn)}
