@@ -1,8 +1,193 @@
-function SignUpCompany(){
-    return(
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { registerNewCompany } from "@/services/company-service";
+import { login } from "@/services/auth-service";
+import { saveUserDataGlobalState } from "@/services/user-service";
+import { AuthContext } from "@/contexts/auth/auth-provider";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+
+const formSchema = z.object({
+    companyName: z.string(),
+    cnpj: z.string(),
+    userName: z.string(),
+    department: z.string(),
+    email: z.string().email(),
+    phoneNumber: z.string(),
+    password: z.string()
+})
+
+function SignUpCompany() {
+
+    const { Login } = useContext(AuthContext);
+
+    const navigator = useNavigate();
+
+    const formControl = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            companyName: '',
+            cnpj: '',
+            userName: '',
+            department: '',
+            email: '',
+            phoneNumber: '',
+            password: ''
+        }
+    })
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        await registerNewCompany(
+            values.companyName,
+            values.cnpj,
+            values.userName,
+            values.department,
+            values.email,
+            values.phoneNumber,
+            values.password
+        );
+
+        const loginResponse = await login(values.email, values.password);
+
+        if (loginResponse) {
+            await saveUserDataGlobalState(loginResponse.token, Login);
+            navigator('/main-page');
+        }
+
+    }
+
+    return (
         <>
+            <div className=" h-screen w-screen flex items-center justify-center bg-[#FF8B3D]">
+                <Card className="w-full h-full max-w-md max-h-md overflow-auto">
+                    <CardContent className="pt-6 ">
+                        <div className="text-center mb-6">
+                            <h1 className="text-2xl font-semibold">Bem vindo ao</h1>
+                            <h2 className="text-[#FF8B3D] text-2xl font-bold">FastInv</h2>
+                        </div>
+                        <Form {...formControl}>
+
+                            <form onSubmit={formControl.handleSubmit(onSubmit)} className="space-y-6">
+
+                                <FormField
+                                    control={formControl.control}
+                                    name="companyName"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">Nome da empresa</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="insira o nome da empresa" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={formControl.control}
+                                    name="cnpj"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">CNPJ</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="insira o CNPJ da empresa" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={formControl.control}
+                                    name="userName"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">Nome do usuário Administrador</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="insira o nome" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={formControl.control}
+                                    name="department"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">Nome o setor/departamento do usuário Administrador</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="insira o setor/departamento" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={formControl.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">Email do usuário Administrador</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="insira o email" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={formControl.control}
+                                    name="phoneNumber"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">Número celular do usuário Administrador</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="insira o número" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={formControl.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-orange-500 font-bold">Senha</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="insira a senha" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <h5 className="text-sm">Ja tem uma conta? <span className="text-orange-500 cursor-pointer" onClick={() => navigator('/')}>Entre agora</span></h5>
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-[#FF8B3D] hover:bg-[#e67d35]"
+                                >
+                                    Entrar
+                                </Button>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+            </div>
         </>
     )
 }
 
 export default SignUpCompany;
+
+

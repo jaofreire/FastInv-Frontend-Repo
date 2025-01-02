@@ -76,6 +76,7 @@ function SignIn() {
                                         </FormItem>
                                     )}
                                 />
+                                <h5 className="text-sm">Ainda não tem uma conta? <span className="text-orange-500 cursor-pointer" onClick={() => navigator('/sign-up')}>Cadastre-se</span></h5>
                                 <Button
                                     type="submit"
                                     className="w-full bg-[#FF8B3D] hover:bg-[#e67d35]"
