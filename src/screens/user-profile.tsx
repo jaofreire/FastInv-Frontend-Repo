@@ -21,14 +21,13 @@ function UserProfile() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (id) {
+        if (id && isLoading === true) {
             loadUser(id);
-            return;
+            setIsLoading(false);
         }
 
-        setUserData();
+        setUserDataFromAuthContext();
         setIsLoading(false);
-        return;
     })
 
     async function loadUser(id: string) {
@@ -40,11 +39,10 @@ function UserProfile() {
             setPhoneNumber(response.phoneNumber);
             setRole(response.role);
             setCreatedAt(response.createdAt);
-            setIsLoading(false);
         }
     }
 
-    function setUserData() {
+    function setUserDataFromAuthContext() {
         setUserName(authContext.UserName);
         setDepartment(authContext.Department);
         setEmail(authContext.Email);
