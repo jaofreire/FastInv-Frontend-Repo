@@ -20,10 +20,20 @@ export const postRegisterNewCompany = async (
         phoneNumber: phoneNumber,
         password: password
     })
-    .then((response) =>{
-        const responseData = response.data;
-        return responseData;
-    })
+        .then((response) => {
+            const responseData = response.data;
+            return responseData;
+        })
+
+    return data;
+}
+
+export const fetchCompanyById = async (id: string): Promise<CompanyType> => {
+    const data = await api.get<ApiResponse<CompanyType>>('/Company/' + id)
+        .then((response) => {
+            const responseData = response.data
+            return responseData.response;
+        })
 
     return data;
 }

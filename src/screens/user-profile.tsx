@@ -4,6 +4,7 @@ import SideBar from "@/components/Global/sidebar";
 import UserProfileCard from "@/components/Global/user-profile-card";
 import { useParams } from "react-router-dom";
 import { getUserById } from "@/services/user-service";
+import LoadingCircle from "@/components/loading/loading-circle";
 
 function UserProfile() {
 
@@ -52,8 +53,8 @@ function UserProfile() {
         setCreatedAt(authContext.CreatedAt);
     }
 
-    if(isLoading){
-        return <div>Carregando</div>
+    if (isLoading) {
+        return <LoadingCircle />
     }
 
     return (

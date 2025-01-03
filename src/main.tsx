@@ -11,6 +11,7 @@ import ProtectedRoute from './route/protected-route.tsx'
 import UserProfile from './screens/user-profile.tsx'
 import AllUsers from './screens/all-users.tsx'
 import SignUpCompany from './screens/sign-up-company.tsx'
+import CompanyInformation from './screens/company-information.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <AuthProvider>
@@ -27,6 +28,11 @@ createRoot(document.getElementById('root')!).render(
         <Route path='/user-profile/:id?' element={
           <ProtectedRoute>
             <UserProfile />
+          </ProtectedRoute>} />
+
+        <Route path='/company-information' element={
+          <ProtectedRoute>
+            <CompanyInformation />
           </ProtectedRoute>} />
 
         <Route path='/my-tables' element={

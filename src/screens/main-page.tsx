@@ -60,9 +60,9 @@ function MainPage() {
                 <main className="pl-64">
                     <header className="flex h-16 items-center justify-between border-b bg-white px-6">
                         <div className="flex items-center gap-4">
-                            <div className="h-8 w-8 rounded-full bg-purple-100" />
+                            {/* <div className="h-8 w-8 rounded-full bg-purple-100" /> */}
                             <div>
-                                <div className="text-sm text-gray-500">{CompanyName}</div>
+                                <div className="text-sm text-gray-500 cursor-pointer" onClick={() => navigator('/company-information')}>{CompanyName}</div>
                                 <div className="font-medium">Bem-Vindo, {UserName}</div>
                             </div>
                             <div className='flex-1'>

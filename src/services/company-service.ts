@@ -1,5 +1,6 @@
 import api from "@/api/api"
-import { postRegisterNewCompany } from "@/api/api-company"
+import { fetchCompanyById, postRegisterNewCompany } from "@/api/api-company"
+import { CompanyType } from "@/types/api-response-types/company/company-type";
 
 export const registerNewCompany = async (
     companyName: string,
@@ -20,5 +21,10 @@ export const registerNewCompany = async (
         password
     )
 
+    return response;
+}
+
+export const getCompanyById = async (id: string) : Promise<CompanyType> => {
+    const response = await fetchCompanyById(id);
     return response;
 }
