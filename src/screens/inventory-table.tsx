@@ -20,6 +20,7 @@ import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems,
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/update-inventory-table-request-type";
 import RemoveTableAlertDialog from "@/components/inventory-table/remove-table-alert-dialog";
 import UpdateTableNameDialog from "@/components/inventory-table/update-table-name-dialog";
+import ErrorDialog from "@/components/Global/errors/error-dialog";
 
 function InventoryTable() {
     const { tableName, id } = useParams();
@@ -28,15 +29,20 @@ function InventoryTable() {
 
     useEffect(() => {
         const loadInventoryTable = async () => {
-            {/* Tratar erro quando tentar buscar uma tabela que não exista mais, mostrar erro na tela */}
             if (id) {
                 const inventoryTable = await getInventoryTableById(id.toString());
-                setInventory(inventoryTable.items);
+                if (inventoryTable.isSuccess === false) {
+                    setError(inventoryTable.message);
+                    return;
+                }
+                setInventory(inventoryTable.response.items);
             }
         };
 
         loadInventoryTable();
     }, []);
+
+    const [error, setError] = useState<string>('');
 
     const [inventory, setInventory] = useState<Map<string, string[]>>(
         new Map<string, string[]>([
@@ -84,20 +90,35 @@ function InventoryTable() {
             const inventoryObject = Object.fromEntries(inventory);
             console.log(inventoryObject);
             const updateRequest = new UpdateInventoryTableRequestType(id, tableName, columnEdited, previousValue, currentValue, inventoryObject);
-            await updateInventoryTableItems(updateRequest);
+            const response = await updateInventoryTableItems(updateRequest);
+
+            if(response.isSuccess === false){
+                setError(response.message);
+            }
+
         }
     }
 
     async function updateTableName(newName: string) {
         if (id && newName) {
-            await updateInventoryTableName(id, newName);
+            const response = await updateInventoryTableName(id, newName);
+
+            if(response.isSuccess === false){
+                setError(response.message);
+            }
+
             navigation(-1);
         }
     }
 
     async function removeTable() {
         if (id) {
-            await removeInventoryTable(id);
+            const response = await removeInventoryTable(id);
+
+            if(response.isSuccess === false){
+                setError(response.message);
+            }
+
             navigation(-1);
         }
     }
@@ -369,6 +390,10 @@ function InventoryTable() {
     }
 
     //#endregion
+
+    if(error){
+        return <ErrorDialog errorDescription={error}/>
+    }
 
     return (
         <>

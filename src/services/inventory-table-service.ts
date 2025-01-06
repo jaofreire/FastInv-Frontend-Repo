@@ -1,40 +1,92 @@
 import { deleteInventoryTable, fetchInventoryTableById, fetchInventoryTablesByCompanyId, patchUpdateInventoryTableName, postMigrateExcelToInventoryTable, postNewInventoryTable, putUpdateInventoryTableItems } from "@/api/api-inventory-table"
+import inventoryTableErrorMessages from "@/errors/api-response-error-messages/inventory-table-error-messages";
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/update-inventory-table-request-type";
+import { ApiResponse } from "@/types/api-response-types/api-response";
 import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table/inventory-table-summary-type"
 import { InventoryTableType } from "@/types/api-response-types/inventory-table/inventory-table-type";
 
-export const migrateExcel = async (companyId: string, excelFile: FormData) => {
-    await postMigrateExcelToInventoryTable(companyId, excelFile);
+export const migrateExcel = async (companyId: string, excelFile: FormData): Promise<ApiResponse<InventoryTableType>> => {
+    const apiResponse = await postMigrateExcelToInventoryTable(companyId, excelFile);
+
+    if (apiResponse.isSuccess === false) {
+        apiResponse.message = inventoryTableErrorMessages[apiResponse.message] || 'Ocorreu algum erro inesperado, por favor tente novamente'
+        return apiResponse;
+    }
+
+    return apiResponse;
 }
 
-export const registerNewInventoryTable = async (companyId: string, name: string) => {
-    await postNewInventoryTable(companyId, name);
+export const registerNewInventoryTable = async (companyId: string, name: string): Promise<ApiResponse<InventoryTableType>> => {
+    const apiResponse = await postNewInventoryTable(companyId, name);
+
+    if (apiResponse.isSuccess === false) {
+        apiResponse.message = inventoryTableErrorMessages[apiResponse.message] || 'Ocorreu algum erro inesperado, por favor tente novamente'
+        return apiResponse;
+    }
+
+    return apiResponse;
 }
 
-export const getInventoryTablesByCompanyId = async (companyId: string): Promise<InventoryTabelSummaryType[]> => {
-    const inventoryTableSummaries = await fetchInventoryTablesByCompanyId(companyId);
-    return inventoryTableSummaries
+export const getInventoryTablesByCompanyId = async (companyId: string): Promise<ApiResponse<InventoryTabelSummaryType>> => {
+    const apiResponse = await fetchInventoryTablesByCompanyId(companyId);
+
+    if (apiResponse.isSuccess === false) {
+        apiResponse.message = inventoryTableErrorMessages[apiResponse.message] || 'Ocorreu algum erro inesperado, por favor tente novamente'
+        apiResponse.responseList = [];
+
+        return apiResponse;
+    }
+
+    const inventoryTableSummaries = apiResponse.responseList!.map((value: any) => new InventoryTabelSummaryType(value.id, value.companyId, value.name, value.registersCount));
+    apiResponse.responseList = inventoryTableSummaries;
+
+    return apiResponse;
 }
 
-export const getInventoryTableById = async (id: string): Promise<InventoryTableType> => {
-    const response = await fetchInventoryTableById(id);
+export const getInventoryTableById = async (id: string): Promise<ApiResponse<InventoryTableType>> => {
+    const apiResponse = await fetchInventoryTableById(id);
 
-    const itemsMap = new Map<string, string[]>(Object.entries(response.items));
-    console.log(itemsMap);
+    if (apiResponse.isSuccess === false) {
+        apiResponse.message = inventoryTableErrorMessages[apiResponse.message] || 'Ocorreu algum erro inesperado, por favor tente novamente';
+        return apiResponse;
+    }
 
-    response.items = itemsMap;
+    const itemsMap = new Map<string, string[]>(Object.entries(apiResponse.response.items));
 
-    return response;
+    apiResponse.response.items = itemsMap;
+
+    return apiResponse;
 }
 
-export const updateInventoryTableItems = async (request: UpdateInventoryTableRequestType) => {
-    await putUpdateInventoryTableItems(request);
+export const updateInventoryTableItems = async (request: UpdateInventoryTableRequestType): Promise<ApiResponse<InventoryTableType>> => {
+    const apiResponse = await putUpdateInventoryTableItems(request);
+
+    if (apiResponse.isSuccess === false) {
+        apiResponse.message = inventoryTableErrorMessages[apiResponse.message] || 'Ocorreu algum erro inesperado, por favor tente novamente'
+        return apiResponse;
+    }
+
+    return apiResponse;
 }
 
-export const updateInventoryTableName = async (id: string, newName: string) => {
-    await patchUpdateInventoryTableName(id, newName);
+export const updateInventoryTableName = async (id: string, newName: string): Promise<ApiResponse<InventoryTableType>> => {
+    const apiResponse = await patchUpdateInventoryTableName(id, newName);
+
+    if (apiResponse.isSuccess === false) {
+        apiResponse.message = inventoryTableErrorMessages[apiResponse.message] || 'Ocorreu algum erro inesperado, por favor tente novamente'
+        return apiResponse;
+    }
+
+    return apiResponse;
 }
 
-export const removeInventoryTable = async (id: string) => {
-    await deleteInventoryTable(id);
+export const removeInventoryTable = async (id: string): Promise<ApiResponse<InventoryTableType>> => {
+    const apiResponse = await deleteInventoryTable(id);
+
+    if (apiResponse.isSuccess === false) {
+        apiResponse.message = inventoryTableErrorMessages[apiResponse.message] || 'Ocorreu algum erro inesperado, por favor tente novamente'
+        return apiResponse;
+    }
+
+    return apiResponse;
 }
