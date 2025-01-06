@@ -29,8 +29,11 @@ function UserProfile() {
             setIsLoading(false);
         }
 
-        setUserDataFromAuthContext();
-        setIsLoading(false);
+        {/* Não era pra ter essa lógica, pois não era para o componente renderizar 2 vezes seguidas, só fez o codigo ficar mais complexo */}
+        if (isLoading === true) {
+            setUserDataFromAuthContext();
+            setIsLoading(false);
+        }
     })
 
     async function loadUser(id: string) {
