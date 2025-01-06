@@ -9,7 +9,7 @@ import { registerNewCompany } from "@/services/company-service";
 import { login } from "@/services/auth-service";
 import { saveUserDataGlobalState } from "@/services/user-service";
 import { AuthContext } from "@/contexts/auth/auth-provider";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
@@ -27,6 +27,8 @@ function SignUpCompany() {
     const { Login } = useContext(AuthContext);
 
     const navigator = useNavigate();
+
+    const [error, setError] = useState<string>('');
 
     const formControl = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -54,11 +56,12 @@ function SignUpCompany() {
 
         const loginResponse = await login(values.email, values.password);
 
-        if (loginResponse) {
-            await saveUserDataGlobalState(loginResponse.token, Login);
-            navigator('/main-page');
+        if (loginResponse.isSuccess === false) {
+            setError(loginResponse.message);
         }
 
+        await saveUserDataGlobalState(loginResponse.response, Login);
+        navigator('/main-page');
     }
 
     return (
@@ -171,7 +174,7 @@ function SignUpCompany() {
                                         </FormItem>
                                     )}
                                 />
-
+                                {error ?? <span className="text-red-500">{error}</span>}
                                 <h5 className="text-sm">Ja tem uma conta? <span className="text-orange-500 cursor-pointer" onClick={() => navigator('/')}>Entre agora</span></h5>
                                 <Button
                                     type="submit"
