@@ -11,6 +11,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "@/contexts/auth/auth-provider";
 import { registerNewUser } from "@/services/user-service";
 import ErrorDialog from "../Global/errors/error-dialog";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const formSchema = z.object({
     userName:
@@ -32,7 +33,12 @@ const formSchema = z.object({
 
     password:
         z.string()
-            .min(6, { message: 'Senha deve conter pelo menos 6 caracteres' })
+            .min(6, { message: 'Senha deve conter pelo menos 6 caracteres' }),
+
+    role:
+        z.enum(['0', '1'], {
+            required_error: 'Escolha uma opção'
+        })
 })
 
 function AddUserDialogForm() {
@@ -60,7 +66,7 @@ function AddUserDialogForm() {
             department: values.department,
             email: values.email,
             phoneNumber: values.phoneNumber,
-            role: 1
+            role: Number(values.role)
         }
 
         const response = await registerNewUser(request);
@@ -83,13 +89,12 @@ function AddUserDialogForm() {
                 <DialogTrigger asChild>
                     <Button className="w-30 h-8 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><BadgePlus />Adicionar funcionário</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] bg-orange-600 border-black">
+                <DialogContent className="sm:max-w-[425px] bg-orange-600 border-black max-h-screen overflow-auto">
                     <DialogHeader>
                         <DialogTitle className="text-white text-xl font-bold">Criar funcionário</DialogTitle>
                         <DialogDescription className="text-white opacity-75">Insira as informações do novo funcionário</DialogDescription>
                     </DialogHeader>
                     <Form {...formControl}>
-
                         <form onSubmit={formControl.handleSubmit(onSubmit)} className="space-y-6">
 
                             <FormField
@@ -162,12 +167,39 @@ function AddUserDialogForm() {
                                 )}
                             />
 
+                            <FormField
+                                control={formControl.control}
+                                name="role"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-white font-medium">Tipo de permissão</FormLabel>
+                                        <FormControl>
+                                            <Select {...field}
+                                                onValueChange={(value) => field.onChange(value)}
+                                                value={field.value} >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Selecione" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectGroup>
+                                                        <SelectItem value='0'> Usuário </SelectItem>
+                                                        <SelectItem value='1'> Admin </SelectItem>
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage className="text-red-950" />
+                                    </FormItem>
+                                )}
+                            />
+
                             <Button
                                 type="submit"
                                 className="w-full bg-black hover:bg-black hover:opacity-95"
                             >
                                 Criar
                             </Button>
+                            
                         </form>
                     </Form>
                 </DialogContent>
