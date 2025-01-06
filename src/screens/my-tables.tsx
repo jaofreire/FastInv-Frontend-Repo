@@ -1,3 +1,4 @@
+import ErrorDialog from "@/components/Global/errors/error-dialog";
 import SideBar from "@/components/Global/sidebar";
 import CreateNewInventoryTableDialog from "@/components/my-tables/create-new-inventory-table-dialog";
 import MigrateExcelDialog from "@/components/my-tables/migrate-excel-dialog";
@@ -11,20 +12,32 @@ import { Link } from "react-router-dom";
 
 function MyTables() {
     const { CompanyId } = useContext(AuthContext);
-    
+
     const [fetchedInventoryTables, setFetchedInventoryTables] = useState<InventoryTabelSummaryType[]>([]);
+
+    const [error, setError] = useState<string>('');
 
     useEffect(() => {
         const loadInventoryTablesSummary = async () => {
-            const inventoryTables = await getInventoryTablesByCompanyId(CompanyId);
-            setFetchedInventoryTables(inventoryTables);
+            const response = await getInventoryTablesByCompanyId(CompanyId);
+
+            if (response.isSuccess === false) {
+                setError(response.message)
+            }
+
+            setFetchedInventoryTables(response.responseList!);
         }
 
         loadInventoryTablesSummary();
     }, []);
 
     async function createNewInventoryTable(name: string) {
-        await registerNewInventoryTable(CompanyId, name);
+        const response = await registerNewInventoryTable(CompanyId, name);
+        
+        if(response.isSuccess === false){
+            setError(response.message);
+        }
+
         window.location.reload();
     }
 
@@ -36,8 +49,17 @@ function MyTables() {
         }
 
         formData.append('file', excelFile);
-        await migrateExcel(CompanyId, formData);
+        const response = await migrateExcel(CompanyId, formData);
+        
+        if(response.isSuccess === false){
+            setError(response.message);
+        }
+
         window.location.reload();
+    }
+
+    if (error) {
+        return <ErrorDialog errorDescription={error} />
     }
 
     return (

@@ -1,12 +1,14 @@
 import { authenticate } from "@/api/api-auth";
-import { AuthType } from "@/types/api-response-types/auth/auth-type";
+import { ApiResponse } from "@/types/api-response-types/api-response";
 import { addCookie } from "@/utils/cookie-handler";
 
-export const login = async(email: string, password: string) : Promise<AuthType> => {
-    const response = await authenticate(email, password);
-    if(response){
-        addCookie('token', response.token);
-    };
+export const login = async(email: string, password: string) : Promise<ApiResponse<string>> => {
+    const apiResponse = await authenticate(email, password);
     
-    return response;
+    if(apiResponse.isSuccess === false){
+        return apiResponse;
+    }
+
+    addCookie('token', apiResponse.response);
+    return apiResponse;
 }

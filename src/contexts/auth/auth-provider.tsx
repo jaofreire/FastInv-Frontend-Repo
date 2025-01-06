@@ -1,3 +1,4 @@
+import LoadingCircle from "@/components/loading/loading-circle";
 import { saveUserDataGlobalState } from "@/services/user-service";
 import { getCookie } from "@/utils/cookie-handler";
 import { createContext, useEffect, useState } from "react"
@@ -137,7 +138,7 @@ export function AuthProvider({
     }
 
     if (isLoading) {
-        return <div>Carregando...</div>
+        return <LoadingCircle />
     }
 
     return (

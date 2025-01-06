@@ -6,7 +6,7 @@ import { getMainInfos } from '@/services/main-info-service';
 import { MovementHistoryType } from '@/types/api-response-types/movement-history/movement-history-type';
 import { getLatestTenMovementsHistoryByCompanyId } from '@/services/movement-history-service';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { AuthContext } from '@/contexts/auth/auth-provider';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,8 @@ function MainPage() {
     const tableHeaders: string[] = ['Usuário', 'Tabela', 'Ação', 'Data/Hora', 'Coluna alterada', 'Valor anterior', 'Valor atual'];
 
     const { CompanyName, CompanyId, UserName } = useContext(AuthContext);
+
+    const navigator = useNavigate();
 
     const [inventoryTableCount, setInventoryTableCount] = useState<number>(0);
     const [employersCount, setEmployersCount] = useState<number>(0);
@@ -58,9 +60,9 @@ function MainPage() {
                 <main className="pl-64">
                     <header className="flex h-16 items-center justify-between border-b bg-white px-6">
                         <div className="flex items-center gap-4">
-                            <div className="h-8 w-8 rounded-full bg-purple-100" />
+                            {/* <div className="h-8 w-8 rounded-full bg-purple-100" /> */}
                             <div>
-                                <div className="text-sm text-gray-500">{CompanyName}</div>
+                                <div className="text-sm text-gray-500 cursor-pointer" onClick={() => navigator('/company-information')}>{CompanyName}</div>
                                 <div className="font-medium">Bem-Vindo, {UserName}</div>
                             </div>
                             <div className='flex-1'>
@@ -120,10 +122,18 @@ function MainPage() {
                                             <>
                                                 <TableRow key={index}>
                                                     {/* Adicionar link direcionando para o perfil do usuário responsavel pela alteração */}
-                                                    <TableCell>{movement.userName}</TableCell>
-                                                    <Link className="cursor-pointer" to={'/inventory-table/' + movement.inventoryTableName + '/' + movement.inventoryTableId}>
-                                                        <TableCell>{movement.inventoryTableName}</TableCell>
-                                                    </Link>
+                                                    <TableCell
+                                                        className='cursor-pointer text-blue-500'
+                                                        onClick={() => navigator('/user-profile/' + movement.userId)}
+                                                    >
+                                                        {movement.userName}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className='cursor-pointer text-blue-500'
+                                                        onClick={() => navigator('/inventory-table/' + movement.inventoryTableName + '/' + movement.inventoryTableId)}
+                                                    >
+                                                        {movement.inventoryTableName}
+                                                    </TableCell>
                                                     <TableCell>{movement.eventType}</TableCell>
                                                     <TableCell>
                                                         {formatTimestamp(movement.occurredOn)}

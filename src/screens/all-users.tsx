@@ -1,4 +1,5 @@
 import UserCard from "@/components/all-users/user-card";
+import ErrorDialog from "@/components/Global/errors/error-dialog";
 import SideBar from "@/components/Global/sidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,12 +19,21 @@ function AllUsers() {
 
     const [isFilterMode, setIsFilter] = useState<boolean>(false);
 
+    const [error, setError] = useState<string>('');
+
     const { CompanyId } = useContext(AuthContext);
 
     useEffect(() => {
         const loadUsers = async () => {
-            const response = await getUsersByCompanyId(CompanyId);
-            setUsers(response);
+            const usersResponse = await getUsersByCompanyId(CompanyId);
+
+            if (usersResponse.isSuccess === false) {
+                setError(usersResponse.message);
+            }
+
+            if (usersResponse.responseList) {
+                setUsers(usersResponse.responseList);
+            }
         }
 
         loadUsers();
@@ -36,9 +46,13 @@ function AllUsers() {
         setIsFilter(true);
     }
 
-    function removeFilters(){
+    function removeFilters() {
         setFilteredUsers([]);
         setIsFilter(false);
+    }
+
+    if (error) {
+        return <ErrorDialog errorDescription={error} />
     }
 
     return (

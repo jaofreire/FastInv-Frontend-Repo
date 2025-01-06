@@ -1,4 +1,5 @@
 import { fetchUserById, fetchUsersByCompanyId } from '@/api/api-user';
+import { ApiResponse } from '@/types/api-response-types/api-response';
 import { UserType } from '@/types/api-response-types/user/user-type';
 import { deleteCookie } from '@/utils/cookie-handler';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
@@ -35,17 +36,23 @@ export const saveUserDataGlobalState = async (token: string,
 
     }
 
-    const response = await fetchUserById(id);
+    const apiResponse = await fetchUserById(id);
+
+    if (apiResponse.isSuccess === false) {
+        deleteCookie('token');
+        return false;
+    }
+
     login(
-        response.id,
-        response.companyId,
-        response.name,
-        response.company.name,
-        response.department,
-        response.email,
-        response.phoneNumber,
-        response.role,
-        response.createdAt
+        apiResponse.response.id,
+        apiResponse.response.companyId,
+        apiResponse.response.name,
+        apiResponse.response.company.name,
+        apiResponse.response.department,
+        apiResponse.response.email,
+        apiResponse.response.phoneNumber,
+        apiResponse.response.role,
+        apiResponse.response.createdAt
     );
 
     return true;
@@ -59,12 +66,12 @@ const jwtTokenExpireValidate = (expireDate: number): boolean => {
     return currentTime < expireDate;
 }
 
-export const getUserById = async (id: string) : Promise<UserType> => {
+export const getUserById = async (id: string): Promise<ApiResponse<UserType>> => {
     const response = await fetchUserById(id);
     return response;
 }
 
-export const getUsersByCompanyId = async (companyId: string) => {
+export const getUsersByCompanyId = async (companyId: string): Promise<ApiResponse<UserType>> => {
     const response = await fetchUsersByCompanyId(companyId);
     return response;
 }

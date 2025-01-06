@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { login } from "@/services/auth-service";
 import { saveUserDataGlobalState } from "@/services/user-service";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "@/contexts/auth/auth-provider";
 
 const formSchema = z.object({
@@ -22,6 +22,8 @@ function SignIn() {
 
     const navigator = useNavigate()
 
+    const [error, setError] = useState<string>('');
+
     const formControl = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -33,10 +35,13 @@ function SignIn() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const loginResponse = await login(values.email, values.password);
 
-        if (loginResponse) {
-            await saveUserDataGlobalState(loginResponse.token, Login);
-            navigator('/main-page');
-        };
+        if (loginResponse.isSuccess === false) {
+            setError(loginResponse.message);
+        }
+
+        await saveUserDataGlobalState(loginResponse.response, Login);
+        navigator('/main-page');
+
     }
 
     return (
@@ -76,6 +81,8 @@ function SignIn() {
                                         </FormItem>
                                     )}
                                 />
+                                {error ?? <span className="text-red-500">{error}</span>}
+                                <h5 className="text-sm">Ainda não tem uma conta? <span className="text-orange-500 cursor-pointer" onClick={() => navigator('/sign-up')}>Cadastre-se</span></h5>
                                 <Button
                                     type="submit"
                                     className="w-full bg-[#FF8B3D] hover:bg-[#e67d35]"

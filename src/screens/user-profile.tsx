@@ -4,6 +4,8 @@ import SideBar from "@/components/Global/sidebar";
 import UserProfileCard from "@/components/Global/user-profile-card";
 import { useParams } from "react-router-dom";
 import { getUserById } from "@/services/user-service";
+import LoadingCircle from "@/components/loading/loading-circle";
+import ErrorDialog from "@/components/Global/errors/error-dialog";
 
 function UserProfile() {
 
@@ -19,31 +21,34 @@ function UserProfile() {
 
     const [isLoading, setIsLoading] = useState(true);
 
+    const [error, setError] = useState<string>('');
+
     useEffect(() => {
-        if (id) {
+        if (id && isLoading === true) {
             loadUser(id);
-            return;
+            setIsLoading(false);
         }
 
-        setUserData();
+        setUserDataFromAuthContext();
         setIsLoading(false);
-        return;
     })
 
     async function loadUser(id: string) {
-        const response = await getUserById(id);
-        if (response) {
-            setUserName(response.name);
-            setDepartment(response.department);
-            setEmail(response.email);
-            setPhoneNumber(response.phoneNumber);
-            setRole(response.role);
-            setCreatedAt(response.createdAt);
-            setIsLoading(false);
+        const userResponse = await getUserById(id);
+
+        if (userResponse.isSuccess === false) {
+            setError(userResponse.message);
         }
+
+        setUserName(userResponse.response.name);
+        setDepartment(userResponse.response.department);
+        setEmail(userResponse.response.email);
+        setPhoneNumber(userResponse.response.phoneNumber);
+        setRole(userResponse.response.role);
+        setCreatedAt(userResponse.response.createdAt);
     }
 
-    function setUserData() {
+    function setUserDataFromAuthContext() {
         setUserName(authContext.UserName);
         setDepartment(authContext.Department);
         setEmail(authContext.Email);
@@ -52,8 +57,12 @@ function UserProfile() {
         setCreatedAt(authContext.CreatedAt);
     }
 
-    if(isLoading){
-        return <div>Carregando</div>
+    if (isLoading) {
+        return <LoadingCircle />
+    }
+
+    if (error) {
+        return <ErrorDialog errorDescription={error} />
     }
 
     return (

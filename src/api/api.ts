@@ -1,3 +1,4 @@
+import { ApiResponse } from '@/types/api-response-types/api-response';
 import { getCookie } from '@/utils/cookie-handler';
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
@@ -14,10 +15,16 @@ api.interceptors.response.use(
         console.log('Resposta recebida: ', response);
         return response;
     },
-    (error: AxiosError) => {
+    (error: AxiosError<ApiResponse<null>>) => {
         console.log('Erro na resposta', error);
 
-        return Promise.reject(error);
+        const apiError: ApiResponse<null> = {
+            isSuccess: false,
+            message: error.response!.data!.message || 'Error inesperado',
+            response: null
+        }
+
+        return Promise.reject(apiError);
     } 
 )
 
