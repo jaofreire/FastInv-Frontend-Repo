@@ -1,4 +1,5 @@
-import { fetchUserById, fetchUsersByCompanyId } from '@/api/api-user';
+import { deleteUser, fetchUserById, fetchUsersByCompanyId, postRegisterNewUser } from '@/api/api-user';
+import { RegisterNewUserRequestType } from '@/types/api-request-types/user/register-new-user-request-type';
 import { ApiResponse } from '@/types/api-response-types/api-response';
 import { UserType } from '@/types/api-response-types/user/user-type';
 import { deleteCookie } from '@/utils/cookie-handler';
@@ -66,6 +67,11 @@ const jwtTokenExpireValidate = (expireDate: number): boolean => {
     return currentTime < expireDate;
 }
 
+export const registerNewUser = async (request: RegisterNewUserRequestType): Promise<ApiResponse<UserType>> => {
+    const response = await postRegisterNewUser(request);
+    return response;
+}
+
 export const getUserById = async (id: string): Promise<ApiResponse<UserType>> => {
     const response = await fetchUserById(id);
     return response;
@@ -74,5 +80,10 @@ export const getUserById = async (id: string): Promise<ApiResponse<UserType>> =>
 export const getUsersByCompanyId = async (companyId: string): Promise<ApiResponse<UserType>> => {
     const response = await fetchUsersByCompanyId(companyId);
     return response;
+}
+
+export const deleteExistingUser = async (id: string): Promise<ApiResponse<UserType>> => {
+    const apiResponse = await deleteUser(id);
+    return apiResponse;
 }
 

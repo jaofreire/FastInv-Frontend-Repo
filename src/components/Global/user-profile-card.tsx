@@ -1,6 +1,8 @@
-import { Building2, Calendar, Mail, Phone } from "lucide-react";
+import { Building2, Calendar, Mail, Phone, Trash } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { format } from "date-fns";
+import DeleteUserAlertDialog from "../user-profile/delete-user-alert-dialog";
+
 
 function UserProfileCard({
     UserName,
@@ -8,7 +10,9 @@ function UserProfileCard({
     Department,
     Email,
     PhoneNumber,
-    CreatedAt
+    CreatedAt,
+    displayDeleteUserButton,
+    onClickConfirmDeleteUserButton
 }: {
     UserName: string;
     Role: string;
@@ -16,7 +20,10 @@ function UserProfileCard({
     Email: string;
     PhoneNumber: string;
     CreatedAt: string;
+    displayDeleteUserButton: boolean;
+    onClickConfirmDeleteUserButton: () => void;
 }) {
+
 
     return (
         <>
@@ -62,6 +69,13 @@ function UserProfileCard({
                                             <p className="font-medium">{format(CreatedAt, 'dd/MM/yyyy')}</p>
                                         </div>
                                     </div>
+
+                                    {displayDeleteUserButton && (
+                                        <DeleteUserAlertDialog
+                                            onClickConfirmButton={onClickConfirmDeleteUserButton}
+                                        />
+                                    )}
+
                                 </div>
                             </CardContent>
                         </Card>

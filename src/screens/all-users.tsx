@@ -1,3 +1,4 @@
+import AddUserDialogForm from "@/components/all-users/add-user-dialog-form";
 import UserCard from "@/components/all-users/user-card";
 import ErrorDialog from "@/components/Global/errors/error-dialog";
 import SideBar from "@/components/Global/sidebar";
@@ -21,7 +22,7 @@ function AllUsers() {
 
     const [error, setError] = useState<string>('');
 
-    const { CompanyId } = useContext(AuthContext);
+    const { CompanyId, Role } = useContext(AuthContext);
 
     useEffect(() => {
         const loadUsers = async () => {
@@ -69,6 +70,13 @@ function AllUsers() {
                                             <CardTitle className=" text-3xl font-bold">Funci<span className="text-orange-400">onários</span>:</CardTitle>
                                             {isFilterMode && <Button className="w-40 h-5 bg-red-500 opacity-90 text-white font-medium rounded-sm hover:opacity-100 hover:bg-red-600" onClick={removeFilters}><FilterX />Remover filtros</Button>}
                                         </div>
+                                        {Role === 'Admin' && (
+                                            <>
+                                                <div className="flex flex-col gap-3 justify-end h-24 w-52 pr-5">
+                                                    <AddUserDialogForm />
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </CardHeader>
                             </div>
