@@ -32,3 +32,13 @@ export const fetchUsersByCompanyId = async (companyId: string): Promise<ApiRespo
 
     return data;
 }
+
+export const deleteUser = async (id: string): Promise<ApiResponse<UserType>> => {
+    const data = await api.delete<ApiResponse<UserType>>('/User/' + id)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => error);
+
+    return data;
+}
