@@ -5,6 +5,7 @@ import UserProfileCard from "@/components/Global/user-profile-card";
 import { useParams } from "react-router-dom";
 import { getUserById } from "@/services/user-service";
 import LoadingCircle from "@/components/loading/loading-circle";
+import ErrorDialog from "@/components/Global/errors/error-dialog";
 
 function UserProfile() {
 
@@ -20,6 +21,8 @@ function UserProfile() {
 
     const [isLoading, setIsLoading] = useState(true);
 
+    const [error, setError] = useState<string>('');
+
     useEffect(() => {
         if (id && isLoading === true) {
             loadUser(id);
@@ -31,15 +34,18 @@ function UserProfile() {
     })
 
     async function loadUser(id: string) {
-        const response = await getUserById(id);
-        if (response) {
-            setUserName(response.name);
-            setDepartment(response.department);
-            setEmail(response.email);
-            setPhoneNumber(response.phoneNumber);
-            setRole(response.role);
-            setCreatedAt(response.createdAt);
+        const userResponse = await getUserById(id);
+
+        if (userResponse.isSuccess === false) {
+            setError(userResponse.message);
         }
+
+        setUserName(userResponse.response.name);
+        setDepartment(userResponse.response.department);
+        setEmail(userResponse.response.email);
+        setPhoneNumber(userResponse.response.phoneNumber);
+        setRole(userResponse.response.role);
+        setCreatedAt(userResponse.response.createdAt);
     }
 
     function setUserDataFromAuthContext() {
@@ -53,6 +59,10 @@ function UserProfile() {
 
     if (isLoading) {
         return <LoadingCircle />
+    }
+
+    if (error) {
+        return <ErrorDialog errorDescription={error} />
     }
 
     return (
