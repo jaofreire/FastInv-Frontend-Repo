@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { AuthContext } from '@/contexts/auth/auth-provider';
 import { Button } from '@/components/ui/button';
+import ErrorDialog from '@/components/Global/errors/error-dialog';
 
 function MainPage() {
 
@@ -25,6 +26,7 @@ function MainPage() {
 
     const [latestTenMovementsHistory, setLatestTenMovementsHistory] = useState<MovementHistoryType[]>([]);
 
+    const [error, setError] = useState<string>('');
 
     useEffect(() => {
         const loadMainInfo = async () => {
@@ -36,8 +38,15 @@ function MainPage() {
         }
 
         const loadLatestTenMovementsHistory = async () => {
-            const movementsHistory = await getLatestTenMovementsHistoryByCompanyId(CompanyId);
-            setLatestTenMovementsHistory(movementsHistory);
+            const movementsResponse = await getLatestTenMovementsHistoryByCompanyId(CompanyId);
+
+            if (movementsResponse.isSuccess === false) {
+                setError(movementsResponse.message);
+            }
+
+            if (movementsResponse.responseList) {
+                setLatestTenMovementsHistory(movementsResponse.responseList);
+            }
         }
 
         loadLatestTenMovementsHistory();
@@ -52,6 +61,9 @@ function MainPage() {
         return formattedDate;
     }
 
+    if (error) {
+        return <ErrorDialog errorDescription={error} />
+    }
 
     return (
         <>

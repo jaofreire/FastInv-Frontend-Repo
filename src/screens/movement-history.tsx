@@ -10,6 +10,7 @@ import FilterOptions from "@/components/movement-history/filter-options";
 import { FilterX } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/contexts/auth/auth-provider";
+import ErrorDialog from "@/components/Global/errors/error-dialog";
 
 function MovementHistory() {
 
@@ -35,10 +36,19 @@ function MovementHistory() {
 
     const [isFilterMode, setIsFilterMode] = useState<boolean>(false);
 
+    const [error, setError] = useState<string>('');
+
     useEffect(() => {
         const loadMovementsHistory = async () => {
-            const loadedMovements = await getMovementsHistoryByCompanyId(CompanyId);
-            setMovementsHistory(loadedMovements);
+            const movementsResponse = await getMovementsHistoryByCompanyId(CompanyId);
+
+            if (movementsResponse.isSuccess === false) {
+                setError(movementsResponse.message);
+            }
+
+            if (movementsResponse.responseList) {
+                setMovementsHistory(movementsResponse.responseList);
+            }
         }
 
         loadMovementsHistory();
@@ -49,6 +59,10 @@ function MovementHistory() {
         const formattedDate = format(date, 'dd/MM/yyyy HH:mm');
 
         return formattedDate;
+    }
+
+    if (error) {
+        return <ErrorDialog errorDescription={error} />
     }
 
     //#region Manipuladores de filtros
