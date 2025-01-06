@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
 import { useNavigate, useParams } from "react-router-dom";
 import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems, updateInventoryTableName } from "@/services/inventory-table-service";
-import { UpdateInventoryTableRequestType } from "@/types/api-request-types/update-inventory-table-request-type";
+import { UpdateInventoryTableRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-request-type";
 import RemoveTableAlertDialog from "@/components/inventory-table/remove-table-alert-dialog";
 import UpdateTableNameDialog from "@/components/inventory-table/update-table-name-dialog";
 import ErrorDialog from "@/components/Global/errors/error-dialog";
