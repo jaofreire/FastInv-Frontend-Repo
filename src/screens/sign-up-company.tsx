@@ -13,13 +13,35 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
-    companyName: z.string(),
-    cnpj: z.string(),
-    userName: z.string(),
-    department: z.string(),
+    companyName:
+        z.string()
+            .min(2, { message: 'Nome da empresa deve conter no minimo 2 caracteres' })
+            .max(186, { message: 'Nome da empresa deve conter no máximo 186 caracteres' }),
+
+    cnpj:
+        z.string()
+            .length(18, { message: 'Cnpj deve conter 18 caracteres' }),
+
+    userName:
+        z.string()
+            .min(4, { message: 'Nome deve conter pelo menos 4 caracteres' })
+            .max(100, { message: 'Nome deve ter até 100 caracteres' }),
+
+    department:
+        z.string()
+            .min(4, { message: 'Departamento deve conter pelo menos 4 caracteres' })
+            .max(85, { message: 'Departamente deve ter até 100 caracteres' }),
+
     email: z.string().email(),
-    phoneNumber: z.string(),
-    password: z.string()
+
+    phoneNumber:
+        z.string()
+            .min(7, { message: 'Número celular deve conter pelo menos 7 números' })
+            .max(15, { message: 'Número celular deve ter até 15 números' }),
+
+    password:
+        z.string()
+            .min(6, { message: 'Senha deve conter pelo menos 6 caracteres' }),
 })
 
 function SignUpCompany() {

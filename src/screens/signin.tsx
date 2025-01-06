@@ -13,7 +13,9 @@ import { AuthContext } from "@/contexts/auth/auth-provider";
 
 const formSchema = z.object({
     email: z.string().email(),
-    password: z.string()
+    password:
+        z.string()
+            .min(6, { message: 'Senha deve conter pelo menos 6 caracteres' }),
 })
 
 function SignIn() {
