@@ -2,9 +2,11 @@ import { Building2, Calendar, Mail, Phone, Trash } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { format } from "date-fns";
 import DeleteUserAlertDialog from "../user-profile/delete-user-alert-dialog";
+import UpdateUserDialog from "../user-profile/update-user-dialog";
 
 
 function UserProfileCard({
+    Id,
     UserName,
     Role,
     Department,
@@ -14,6 +16,7 @@ function UserProfileCard({
     displayDeleteUserButton,
     onClickConfirmDeleteUserButton
 }: {
+    Id: string;
     UserName: string;
     Role: string;
     Department: string;
@@ -24,7 +27,7 @@ function UserProfileCard({
     onClickConfirmDeleteUserButton: () => void;
 }) {
 
-
+    console.log(UserName);
     return (
         <>
             <div className="flex flex-col md:flex-row h-screen w-screen justify-center items-center bg-gray-100">
@@ -70,11 +73,21 @@ function UserProfileCard({
                                         </div>
                                     </div>
 
-                                    {displayDeleteUserButton && (
-                                        <DeleteUserAlertDialog
-                                            onClickConfirmButton={onClickConfirmDeleteUserButton}
+                                    <div className="flex gap-5 w-full items-center justify-center">
+                                        <UpdateUserDialog
+                                            Id={Id}
+                                            Name={UserName}
+                                            Department={Department}
+                                            Email={Email}
+                                            PhoneNumber={PhoneNumber}
                                         />
-                                    )}
+
+                                        {displayDeleteUserButton && (
+                                            <DeleteUserAlertDialog
+                                                onClickConfirmButton={onClickConfirmDeleteUserButton}
+                                            />
+                                        )}
+                                    </div>
 
                                 </div>
                             </CardContent>

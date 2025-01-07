@@ -26,12 +26,14 @@ function UserProfile() {
     useEffect(() => {
         if (id && isLoading === true) {
             loadUser(id);
+            console.log(userName);
             setIsLoading(false);
         }
 
         {/* Não era pra ter essa lógica, pois não era para o componente renderizar 2 vezes seguidas, só fez o codigo ficar mais complexo */ }
         if (isLoading === true) {
             setUserDataFromAuthContext();
+            console.log('',userName);
             setIsLoading(false);
         }
     })
@@ -86,14 +88,15 @@ function UserProfile() {
         <>
             <SideBar />
             <UserProfileCard
+                Id={id ? id : authContext.Id}
                 UserName={userName}
                 Role={role}
                 Department={department}
                 Email={email}
                 PhoneNumber={phoneNumber}
                 CreatedAt={createdAt}
-                
-                displayDeleteUserButton={id ? true: false}
+
+                displayDeleteUserButton={id ? true : false}
 
                 onClickConfirmDeleteUserButton={() => deleteUser()}
             />
