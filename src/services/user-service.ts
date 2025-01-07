@@ -1,4 +1,4 @@
-import { deleteUser, fetchUserById, fetchUsersByCompanyId, postRegisterNewUser, putUpdateUser } from '@/api/api-user';
+import { deleteUser, fetchUserById, fetchUsersByCompanyId, postRegisterNewUser, putUpdateUser, putUpdateUserRole } from '@/api/api-user';
 import { RegisterNewUserRequestType } from '@/types/api-request-types/user/register-new-user-request-type';
 import { UpdateUserRequestType } from '@/types/api-request-types/user/update-user-request-type';
 import { ApiResponse } from '@/types/api-response-types/api-response';
@@ -85,6 +85,11 @@ export const getUsersByCompanyId = async (companyId: string): Promise<ApiRespons
 
 export const updateUser = async (id: string, request: UpdateUserRequestType): Promise<ApiResponse<UserType>> => {
     const apiResponse = await putUpdateUser(id, request);
+    return apiResponse;
+}
+
+export const updateUserRole = async (id: string, newRole: number): Promise<ApiResponse<UserType>> => {
+    const apiResponse = await putUpdateUserRole(id, newRole);
     return apiResponse;
 }
 

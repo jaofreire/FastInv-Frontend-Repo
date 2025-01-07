@@ -44,6 +44,16 @@ export const putUpdateUser = async (id: string, request: UpdateUserRequestType):
     return data;
 }
 
+export const putUpdateUserRole = async (id: string, newRole: number): Promise<ApiResponse<UserType>> => {
+    const data = await api.put<ApiResponse<UserType>>('/User/user-role/' + id, { role: newRole })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => error);
+
+    return data;
+}
+
 export const deleteUser = async (id: string): Promise<ApiResponse<UserType>> => {
     const data = await api.delete<ApiResponse<UserType>>('/User/' + id)
         .then((response) => {

@@ -88,7 +88,7 @@ function UserProfile() {
             <UserProfileCard
                 Id={id ? id : authContext.Id}
                 UserName={userName}
-                Role={role}
+                UserRole={role}
                 Department={department}
                 Email={email}
                 PhoneNumber={phoneNumber}

@@ -3,13 +3,15 @@ import { Card, CardContent } from "../ui/card";
 import { format } from "date-fns";
 import DeleteUserAlertDialog from "../user-profile/delete-user-alert-dialog";
 import UpdateUserDialog from "../user-profile/update-user-dialog";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import UpdateUserRoleDialog from "../user-profile/update-user-role-dialog";
+import { AuthContext } from "@/contexts/auth/auth-provider";
 
 
 function UserProfileCard({
     Id,
     UserName,
-    Role,
+    UserRole,
     Department,
     Email,
     PhoneNumber,
@@ -19,7 +21,7 @@ function UserProfileCard({
 }: {
     Id: string;
     UserName: string;
-    Role: string;
+    UserRole: string;
     Department: string;
     Email: string;
     PhoneNumber: string;
@@ -27,6 +29,8 @@ function UserProfileCard({
     displayDeleteUserButton: boolean;
     onClickConfirmDeleteUserButton: () => void;
 }) {
+
+    const { Role } = useContext(AuthContext);
 
     useEffect(() => {
         console.log(UserName);
@@ -41,7 +45,10 @@ function UserProfileCard({
                             <CardContent className="p-6 w-[500px]">
                                 <div className="flex flex-col items-center mb-8">
                                     <h1 className="text-2xl font-bold">{UserName}</h1>
-                                    <p className="text-muted-foreground">{Role === 'Admin' ? 'Administrador' : 'Usuário'}</p>
+                                    <p className="text-muted-foreground">{UserRole === 'Admin' ? 'Administrador' : 'Usuário'}</p>
+                                    {Role === 'Admin' && (
+                                        <UpdateUserRoleDialog Id={Id} />
+                                    )}
                                 </div>
 
                                 <div className="space-y-6">
