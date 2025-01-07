@@ -85,15 +85,20 @@ function UserProfileCard({
                                     </div>
 
                                     <div className="flex gap-5 w-full items-center justify-center">
-                                        <UpdateUserDialog
-                                            Id={Id}
-                                            Name={UserName}
-                                            Department={Department}
-                                            Email={Email}
-                                            PhoneNumber={PhoneNumber}
-                                        />
 
-                                        {displayDeleteUserButton && (
+                                        {Role === 'Admin' && (
+                                            <UpdateUserDialog
+                                                Id={Id}
+                                                Name={UserName}
+                                                Department={Department}
+                                                Email={Email}
+                                                PhoneNumber={PhoneNumber}
+                                            />
+
+                                        )}
+
+
+                                        {displayDeleteUserButton && Role === 'Admin' && (
                                             <DeleteUserAlertDialog
                                                 onClickConfirmButton={onClickConfirmDeleteUserButton}
                                             />
