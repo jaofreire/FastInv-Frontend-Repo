@@ -93,7 +93,7 @@ function UserProfileCard({
                                             PhoneNumber={PhoneNumber}
                                         />
 
-                                        {displayDeleteUserButton && (
+                                        {displayDeleteUserButton && Role === 'Admin' && (
                                             <DeleteUserAlertDialog
                                                 onClickConfirmButton={onClickConfirmDeleteUserButton}
                                             />
