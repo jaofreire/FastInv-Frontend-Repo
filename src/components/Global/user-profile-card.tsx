@@ -2,11 +2,16 @@ import { Building2, Calendar, Mail, Phone, Trash } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { format } from "date-fns";
 import DeleteUserAlertDialog from "../user-profile/delete-user-alert-dialog";
+import UpdateUserDialog from "../user-profile/update-user-dialog";
+import { useContext, useEffect } from "react";
+import UpdateUserRoleDialog from "../user-profile/update-user-role-dialog";
+import { AuthContext } from "@/contexts/auth/auth-provider";
 
 
 function UserProfileCard({
+    Id,
     UserName,
-    Role,
+    UserRole,
     Department,
     Email,
     PhoneNumber,
@@ -14,8 +19,9 @@ function UserProfileCard({
     displayDeleteUserButton,
     onClickConfirmDeleteUserButton
 }: {
+    Id: string;
     UserName: string;
-    Role: string;
+    UserRole: string;
     Department: string;
     Email: string;
     PhoneNumber: string;
@@ -24,6 +30,11 @@ function UserProfileCard({
     onClickConfirmDeleteUserButton: () => void;
 }) {
 
+    const { Role } = useContext(AuthContext);
+
+    useEffect(() => {
+        console.log(UserName);
+    }, [UserName]);
 
     return (
         <>
@@ -34,7 +45,10 @@ function UserProfileCard({
                             <CardContent className="p-6 w-[500px]">
                                 <div className="flex flex-col items-center mb-8">
                                     <h1 className="text-2xl font-bold">{UserName}</h1>
-                                    <p className="text-muted-foreground">{Role === 'Admin' ? 'Administrador' : 'Usuário'}</p>
+                                    <p className="text-muted-foreground">{UserRole === 'Admin' ? 'Administrador' : 'Usuário'}</p>
+                                    {Role === 'Admin' && (
+                                        <UpdateUserRoleDialog Id={Id} />
+                                    )}
                                 </div>
 
                                 <div className="space-y-6">
@@ -70,11 +84,21 @@ function UserProfileCard({
                                         </div>
                                     </div>
 
-                                    {displayDeleteUserButton && (
-                                        <DeleteUserAlertDialog
-                                            onClickConfirmButton={onClickConfirmDeleteUserButton}
+                                    <div className="flex gap-5 w-full items-center justify-center">
+                                        <UpdateUserDialog
+                                            Id={Id}
+                                            Name={UserName}
+                                            Department={Department}
+                                            Email={Email}
+                                            PhoneNumber={PhoneNumber}
                                         />
-                                    )}
+
+                                        {displayDeleteUserButton && (
+                                            <DeleteUserAlertDialog
+                                                onClickConfirmButton={onClickConfirmDeleteUserButton}
+                                            />
+                                        )}
+                                    </div>
 
                                 </div>
                             </CardContent>

@@ -23,7 +23,7 @@ function DeleteUserAlertDialog({
                 <AlertDialogTrigger asChild>
                     <Button
                         variant="destructive"
-                        className="w-40 h-8 bg opacity-90 text-white font-regular hover:opacity-100 hover:bg-red-600"
+                        className="w-full h-8 bg opacity-90 text-white font-regular hover:opacity-100 hover:bg-red-600"
                     >
                         <Trash />
                         Excluir este usuário
