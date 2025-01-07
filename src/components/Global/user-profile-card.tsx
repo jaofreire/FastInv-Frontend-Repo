@@ -3,6 +3,7 @@ import { Card, CardContent } from "../ui/card";
 import { format } from "date-fns";
 import DeleteUserAlertDialog from "../user-profile/delete-user-alert-dialog";
 import UpdateUserDialog from "../user-profile/update-user-dialog";
+import { useEffect } from "react";
 
 
 function UserProfileCard({
@@ -27,7 +28,10 @@ function UserProfileCard({
     onClickConfirmDeleteUserButton: () => void;
 }) {
 
-    console.log(UserName);
+    useEffect(() => {
+        console.log(UserName);
+    }, [UserName]);
+
     return (
         <>
             <div className="flex flex-col md:flex-row h-screen w-screen justify-center items-center bg-gray-100">

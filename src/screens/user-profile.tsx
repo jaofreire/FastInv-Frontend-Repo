@@ -17,26 +17,24 @@ function UserProfile() {
     const [email, setEmail] = useState<string>('');
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [role, setRole] = useState<string>('');
-    const [createdAt, setCreatedAt] = useState<string>('');
+    const [createdAt, setCreatedAt] = useState<string>('2024-11-20T00:00:00');
 
     const [isLoading, setIsLoading] = useState(true);
 
     const [error, setError] = useState<string>('');
 
     useEffect(() => {
+        console.log('Id do usuário ' + id);
         if (id && isLoading === true) {
             loadUser(id);
-            console.log(userName);
+            setIsLoading(false);
+        }
+        else if (isLoading === true) {
+            setUserDataFromAuthContext();
             setIsLoading(false);
         }
 
-        {/* Não era pra ter essa lógica, pois não era para o componente renderizar 2 vezes seguidas, só fez o codigo ficar mais complexo */ }
-        if (isLoading === true) {
-            setUserDataFromAuthContext();
-            console.log('',userName);
-            setIsLoading(false);
-        }
-    })
+    }, []);
 
     async function loadUser(id: string) {
         const userResponse = await getUserById(id);

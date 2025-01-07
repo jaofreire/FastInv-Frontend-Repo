@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateUser } from "@/services/user-service";
 import { UpdateUserRequestType } from "@/types/api-request-types/user/update-user-request-type";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ErrorDialog from "../Global/errors/error-dialog";
 import { Input } from "../ui/input";
 
@@ -47,7 +47,14 @@ function UpdateUserDialog({
 
     const [error, setError] = useState<string>('');
 
-    console.log(Name);
+    useEffect(() => {
+        formControl.reset({
+            userName: Name,
+            department: Department,
+            email: Email,
+            phoneNumber: PhoneNumber,
+        })
+    }, [Name]);
 
     const formControl = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
