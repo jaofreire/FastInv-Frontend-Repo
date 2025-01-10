@@ -18,9 +18,14 @@ const formSchema = z.object({
             .min(2, { message: 'Nome da empresa deve conter no minimo 2 caracteres' })
             .max(186, { message: 'Nome da empresa deve conter no máximo 186 caracteres' }),
 
+
     cnpj:
         z.string()
-            .length(18, { message: 'Cnpj deve conter 18 caracteres' }),
+            .refine(
+                (value) => /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2}$/.test(value), {
+                message: 'O CNPJ deve estar no formato: 00.000.000/0000-00'
+            }),
+
 
     userName:
         z.string()
@@ -36,8 +41,10 @@ const formSchema = z.object({
 
     phoneNumber:
         z.string()
-            .min(7, { message: 'Número celular deve conter pelo menos 7 números' })
-            .max(15, { message: 'Número celular deve ter até 15 números' }),
+            .refine(
+                (value) => /^\+\d{1,3}\d{6,14}$/.test(value), {
+                message: 'Número de telefone deve estar no formato internacional como: +558100000000'
+            }),
 
     password:
         z.string()
