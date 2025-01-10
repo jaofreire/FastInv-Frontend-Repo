@@ -17,6 +17,7 @@ function UserProfileCard({
     PhoneNumber,
     CreatedAt,
     displayDeleteUserButton,
+    displayUpdateUserRoleButton,
     onClickConfirmDeleteUserButton
 }: {
     Id: string;
@@ -27,13 +28,13 @@ function UserProfileCard({
     PhoneNumber: string;
     CreatedAt: string;
     displayDeleteUserButton: boolean;
+    displayUpdateUserRoleButton: boolean
     onClickConfirmDeleteUserButton: () => void;
 }) {
 
     const { Role } = useContext(AuthContext);
 
     useEffect(() => {
-        console.log(UserName);
     }, [UserName]);
 
     return (
@@ -46,7 +47,7 @@ function UserProfileCard({
                                 <div className="flex flex-col items-center mb-8">
                                     <h1 className="text-2xl font-bold">{UserName}</h1>
                                     <p className="text-muted-foreground">{UserRole === 'Admin' ? 'Administrador' : 'Usuário'}</p>
-                                    {Role === 'Admin' && (
+                                    {Role === 'Admin' && displayUpdateUserRoleButton && (
                                         <UpdateUserRoleDialog Id={Id} />
                                     )}
                                 </div>

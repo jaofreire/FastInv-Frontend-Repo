@@ -22,7 +22,7 @@ function AllUsers() {
 
     const [error, setError] = useState<string>('');
 
-    const { CompanyId, Role } = useContext(AuthContext);
+    const { Id, CompanyId, Role } = useContext(AuthContext);
 
     useEffect(() => {
         const loadUsers = async () => {
@@ -90,9 +90,11 @@ function AllUsers() {
                                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                     {(isFilterMode ? filteredUsers : users).map((user) => (
                                         <>
-                                            <Link to={'/user-profile/' + user.id}>
-                                                <UserCard name={user.name} department={user.department} key={user.id} />
-                                            </Link>
+                                            {Id !== user.id && (
+                                                <Link to={'/user-profile/' + user.id}>
+                                                    <UserCard name={user.name} department={user.department} key={user.id} />
+                                                </Link>
+                                            )}
                                         </>
                                     ))}
                                 </div>
