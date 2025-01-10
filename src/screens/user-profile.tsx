@@ -95,6 +95,7 @@ function UserProfile() {
                 CreatedAt={createdAt}
 
                 displayDeleteUserButton={id ? true : false}
+                displayUpdateUserRoleButton={id ? true : false}
 
                 onClickConfirmDeleteUserButton={() => deleteUser()}
             />

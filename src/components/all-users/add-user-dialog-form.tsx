@@ -28,8 +28,10 @@ const formSchema = z.object({
 
     phoneNumber:
         z.string()
-            .min(7, { message: 'Número celular deve conter pelo menos 7 números' })
-            .max(15, { message: 'Número celular deve ter até 15 números' }),
+            .refine(
+                (value) => /^\+\d{1,3}\d{6,14}$/.test(value), {
+                message: 'Número de telefone deve estar no formato internacional como: +558100000000'
+            }),
 
     password:
         z.string()
@@ -199,7 +201,7 @@ function AddUserDialogForm() {
                             >
                                 Criar
                             </Button>
-                            
+
                         </form>
                     </Form>
                 </DialogContent>
