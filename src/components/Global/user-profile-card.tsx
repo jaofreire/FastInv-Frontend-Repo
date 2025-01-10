@@ -1,4 +1,4 @@
-import { Building2, Calendar, Mail, Phone, Trash } from "lucide-react";
+import { Building2, Calendar, Mail, Phone } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 import { format } from "date-fns";
 import DeleteUserAlertDialog from "../user-profile/delete-user-alert-dialog";
