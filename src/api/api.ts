@@ -3,7 +3,7 @@ import { getCookie } from '@/utils/cookie-handler';
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 const api = axios.create({
-    baseURL: 'https://localhost:8081/api',
+    baseURL: import.meta.env.VITE_API_URL,
 
     headers: {
         'Content-Type': 'application/json'
@@ -13,6 +13,7 @@ const api = axios.create({
 api.interceptors.response.use(
     (response: AxiosResponse) => {
         console.log('Resposta recebida: ', response);
+
         return response;
     },
     (error: AxiosError<ApiResponse<null>>) => {
