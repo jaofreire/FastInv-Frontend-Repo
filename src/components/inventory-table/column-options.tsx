@@ -1,6 +1,6 @@
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { PopoverContent } from "@radix-ui/react-popover";
-import { ArrowDownAZ, ArrowDownZA, ArrowUpZA, Ellipsis, Filter, Trash2 } from "lucide-react";
+import { ArrowDownAZ, ArrowUpZA, Ellipsis, Filter, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 

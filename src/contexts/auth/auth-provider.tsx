@@ -40,15 +40,15 @@ export const AuthContext = createContext<AuthUserContextType>({
     Role: '',
     CreatedAt: '',
     Login(
-        id,
-        companyId,
-        userName,
-        companyName,
-        department,
-        email,
-        phoneNumber,
-        role,
-        createdAt
+        _id,
+        _companyId,
+        _userName,
+        _companyName,
+        _department,
+        _email,
+        _phoneNumber,
+        _role,
+        _createdAt
     ) {
     },
     Logout() {

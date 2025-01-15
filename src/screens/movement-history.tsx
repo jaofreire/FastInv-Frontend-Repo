@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { format } from 'date-fns'
 import FilterOptions from "@/components/movement-history/filter-options";
 import { FilterX } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/contexts/auth/auth-provider";
 import ErrorDialog from "@/components/Global/errors/error-dialog";
 

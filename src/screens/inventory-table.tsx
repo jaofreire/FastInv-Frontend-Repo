@@ -11,7 +11,7 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClipboardPaste, FilterX, Pencil, PlusIcon, Trash } from "lucide-react";
+import { ClipboardPaste, FilterX, PlusIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
@@ -92,7 +92,7 @@ function InventoryTable() {
             const updateRequest = new UpdateInventoryTableRequestType(id, tableName, columnEdited, previousValue, currentValue, inventoryObject);
             const response = await updateInventoryTableItems(updateRequest);
 
-            if(response.isSuccess === false){
+            if (response.isSuccess === false) {
                 setError(response.message);
             }
 
@@ -103,7 +103,7 @@ function InventoryTable() {
         if (id && newName) {
             const response = await updateInventoryTableName(id, newName);
 
-            if(response.isSuccess === false){
+            if (response.isSuccess === false) {
                 setError(response.message);
             }
 
@@ -115,7 +115,7 @@ function InventoryTable() {
         if (id) {
             const response = await removeInventoryTable(id);
 
-            if(response.isSuccess === false){
+            if (response.isSuccess === false) {
                 setError(response.message);
             }
 
@@ -391,8 +391,8 @@ function InventoryTable() {
 
     //#endregion
 
-    if(error){
-        return <ErrorDialog errorDescription={error}/>
+    if (error) {
+        return <ErrorDialog errorDescription={error} />
     }
 
     return (

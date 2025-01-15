@@ -1,4 +1,3 @@
-import api from "@/api/api"
 import { fetchCompanyById, postRegisterNewCompany } from "@/api/api-company"
 import { CompanyType } from "@/types/api-response-types/company/company-type";
 
