@@ -8,7 +8,7 @@ const expireDate = new Date();
 export const addCookie = (cookieName: string, cookieValue: string) => {
     expireDate.setHours(2);
     //Descobrir o porque expires não funciona
-    cookies.set(cookieName, cookieValue, { path: '/', sameSite: 'strict', domain: 'localhost'});
+    cookies.set(cookieName, cookieValue, { path: '/', sameSite: 'strict', domain: import.meta.env.VITE_COOKIE_DOMAIN});
 }
 
 export const deleteCookie = (cookieName: string) => {
