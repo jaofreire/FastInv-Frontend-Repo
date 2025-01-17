@@ -136,7 +136,7 @@ function InventoryTable() {
 
     function handleEditColumn(column: any) {
         setEditingColumn({ column })
-        setPreviousValue(column);
+        setPreviousValue(tableHeaders[column]);
     };
 
     function handleColumnValueChange(oldColumn: string, newColumn: string) {
