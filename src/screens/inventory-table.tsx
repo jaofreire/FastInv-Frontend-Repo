@@ -71,10 +71,8 @@ function InventoryTable() {
     //#region Chamadas para API
 
     async function updateItems(inventoryRequest: Map<string, string[]> | null = null) {
-        console.log(columnEdited);
 
         if (columnEdited === '' || previousValue === '' || currentValue === '') {
-            console.log('Chamou updateItems');
             return;
         }
 
@@ -86,10 +84,7 @@ function InventoryTable() {
             if (response.isSuccess === false) {
                 setError(response.message);
             }
-
         }
-
-        console.log('Chamou updateItems');
     }
 
     async function updateTableName(newName: string) {
@@ -123,7 +118,6 @@ function InventoryTable() {
     function handleEditedValuesChange(column: string, current: string) {
         setColumnEdited(column);
         setCurrentValue(current);
-        console.log('Chamou setEditedValues');
     }
 
     function removeEditedValues() {
@@ -180,11 +174,6 @@ function InventoryTable() {
             updateItems(inventoryMap);
             setInventory(inventoryMap);
         }
-
-        console.log(columnEdited);
-        console.log(previousValue);
-        console.log(currentValue);
-        console.log('Chamou handleColumnValueChange');
     };
 
     function handleCellValueChange(rowIndex: number, column: string, value: string) {
