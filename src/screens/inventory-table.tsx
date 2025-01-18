@@ -59,36 +59,27 @@ function InventoryTable() {
     const tableRows = useMemo(() => Array.from(inventory.values()), [inventory]);
     const maxRows = Math.max(...tableRows.map((values) => values.length + 1));
 
-    const [editingCell, setEditingCell] = useState({ row: null, column: null });
-    const [editingColumn, setEditingColumn] = useState({ column: null });
-
     const [columnEdited, setColumnEdited] = useState<string>('');
     const [previousValue, setPreviousValue] = useState<string>('');
     const [currentValue, setCurrentValue] = useState<string>('');
 
-    function setEditedValues(column: string, current: string) {
-        setColumnEdited(column);
-        setCurrentValue(current);
-    }
+    const [columnNameEdited, setColumnNameEdited] = useState<string | null>(null);
 
-    function removeEditedValues() {
-        setColumnEdited('');
-        setPreviousValue('');
-        setCurrentValue('');
-    }
+    const [editingCell, setEditingCell] = useState({ row: null, column: null });
+    const [editingColumn, setEditingColumn] = useState({ column: null });
 
     //#region Chamadas para API
 
-    async function updateItems() {
+    async function updateItems(inventoryRequest: Map<string, string[]> | null = null) {
         console.log(columnEdited);
 
         if (columnEdited === '' || previousValue === '' || currentValue === '') {
+            console.log('Chamou updateItems');
             return;
         }
 
         if (id && tableName) {
-            const inventoryObject = Object.fromEntries(inventory);
-            console.log(inventoryObject);
+            const inventoryObject = Object.fromEntries(inventoryRequest ?? inventory);
             const updateRequest = new UpdateInventoryTableRequestType(id, tableName, columnEdited, previousValue, currentValue, inventoryObject);
             const response = await updateInventoryTableItems(updateRequest);
 
@@ -97,6 +88,8 @@ function InventoryTable() {
             }
 
         }
+
+        console.log('Chamou updateItems');
     }
 
     async function updateTableName(newName: string) {
@@ -127,6 +120,18 @@ function InventoryTable() {
 
     //#region Manipuladores de alterações na tabela
 
+    function handleEditedValuesChange(column: string, current: string) {
+        setColumnEdited(column);
+        setCurrentValue(current);
+        console.log('Chamou setEditedValues');
+    }
+
+    function removeEditedValues() {
+        setColumnEdited('');
+        setPreviousValue('');
+        setCurrentValue('');
+    }
+
     function handleEdit(row: any, column: any) {
         setEditingCell({ row, column });
 
@@ -140,6 +145,11 @@ function InventoryTable() {
     };
 
     function handleColumnValueChange(oldColumn: string, newColumn: string) {
+        setColumnNameEdited(newColumn);
+        handleEditedValuesChange(oldColumn, newColumn);
+    }
+
+    function handleSaveColumnValueChange(oldColumn: string, newColumn: string) {
         //No contexto de mudar o nome da coluna a melhor forma é criando um Array por causa da utilização do splice para substituir elementos existentes
         const inventoryToUpdate = isFilterMode ? filteredItens : inventory
         const updatedInventory = Array.from(inventoryToUpdate);
@@ -163,13 +173,18 @@ function InventoryTable() {
 
             const map = new Map(inventoryArray);
 
-            setEditedValues(oldColumn, newColumn);
+            updateItems(map);
             setInventory(map);
         }
         else {
-            setEditedValues(oldColumn, newColumn);
+            updateItems(inventoryMap);
             setInventory(inventoryMap);
         }
+
+        console.log(columnEdited);
+        console.log(previousValue);
+        console.log(currentValue);
+        console.log('Chamou handleColumnValueChange');
     };
 
     function handleCellValueChange(rowIndex: number, column: string, value: string) {
@@ -181,7 +196,7 @@ function InventoryTable() {
         const columnData = updatedInventory.get(column);
 
         if (columnData) {
-            setEditedValues(column, value);
+            handleEditedValuesChange(column, value);
 
             columnData[rowIndex] = value;
             updatedInventory.set(column, columnData);
@@ -256,13 +271,20 @@ function InventoryTable() {
     }
 
     function handleBlur() {
-        //Problema quando estou alterando o nome da coluna da tabela caso tenha uma igual a tabela é excluída mesmo ainda sendo alterada
-        //Solução: alterar o nome da coluna apenas quando desfocar do input
         setEditingCell({ row: null, column: null });
         setEditingColumn({ column: null });
-        updateItems();
         removeEditedValues();
+
+        updateItems();
     };
+
+    function handleBlurColumnInput(oldColumn: string, newColumn: string) {
+        setEditingColumn({ column: null });
+        setColumnNameEdited(null);
+        removeEditedValues();
+
+        handleSaveColumnValueChange(oldColumn, newColumn);
+    }
 
     function addNewColumn() {
         const updatedInventory = new Map(inventory);
@@ -391,6 +413,7 @@ function InventoryTable() {
 
     //#endregion
 
+
     if (error) {
         return <ErrorDialog errorDescription={error} />
     }
@@ -443,9 +466,9 @@ function InventoryTable() {
 
                                                                     <Input className="w-full border border-gray-300 rounded px-2 py-1"
                                                                         type="text"
-                                                                        value={columnName}
+                                                                        value={columnNameEdited ?? columnName}
                                                                         onChange={(e) => handleColumnValueChange(columnName, e.target.value)}
-                                                                        onBlur={handleBlur}
+                                                                        onBlur={(e) => handleBlurColumnInput(columnName, e.target.value)}
                                                                         autoFocus
                                                                     />
                                                                 )
