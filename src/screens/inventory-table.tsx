@@ -144,9 +144,21 @@ function InventoryTable() {
     }
 
     function handleSaveColumnValueChange(oldColumn: string, newColumn: string) {
+        if(!currentValue){
+            return;
+        }
+
         //No contexto de mudar o nome da coluna a melhor forma é criando um Array por causa da utilização do splice para substituir elementos existentes
         const inventoryToUpdate = isFilterMode ? filteredItens : inventory
         const updatedInventory = Array.from(inventoryToUpdate);
+
+        const existsColumn = updatedInventory.filter(([column]) => column === newColumn);
+        console.log(existsColumn);
+
+        if(existsColumn.length > 0){
+            setError('Uma coluna com o nome ' + newColumn + ' ja existe na tabela, tente outro nome')
+            return;
+        }
 
         const oldColumnIndex = updatedInventory.findIndex(([column]) => column === oldColumn);
         const oldColumnData = updatedInventory[oldColumnIndex][1];
