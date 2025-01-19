@@ -16,11 +16,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
 import { useNavigate, useParams } from "react-router-dom";
-import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems, updateInventoryTableName } from "@/services/inventory-table-service";
+import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems, updateInventoryTableItemsWithoutMovementEvent, updateInventoryTableName } from "@/services/inventory-table-service";
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-request-type";
 import RemoveTableAlertDialog from "@/components/inventory-table/remove-table-alert-dialog";
 import UpdateTableNameDialog from "@/components/inventory-table/update-table-name-dialog";
 import ErrorDialog from "@/components/Global/errors/error-dialog";
+import { UpdateInventoryTableWithoutMovementEventRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-without-movement-event-request-type";
 
 function InventoryTable() {
     const { tableName, id } = useParams();
@@ -87,6 +88,24 @@ function InventoryTable() {
         }
     }
 
+    async function updateColumnChanges(inventoryRequest: Map<string, string[]> | null = null) {
+
+        if (id && tableName) {
+            const inventoryObject = Object.fromEntries(inventoryRequest ?? inventory);
+            const updateRequest: UpdateInventoryTableWithoutMovementEventRequestType = {
+                id: id,
+                name: tableName,
+                items: inventoryObject
+            }
+            const response = await updateInventoryTableItemsWithoutMovementEvent(updateRequest);
+
+            if (response.isSuccess === false) {
+                setError(response.message);
+            }
+        }
+
+    }
+
     async function updateTableName(newName: string) {
         if (id && newName) {
             const response = await updateInventoryTableName(id, newName);
@@ -144,7 +163,7 @@ function InventoryTable() {
     }
 
     function handleSaveColumnValueChange(oldColumn: string, newColumn: string) {
-        if(!currentValue){
+        if (!currentValue) {
             return;
         }
 
@@ -155,7 +174,7 @@ function InventoryTable() {
         const existsColumn = updatedInventory.filter(([column]) => column === newColumn);
         console.log(existsColumn);
 
-        if(existsColumn.length > 0){
+        if (existsColumn.length > 0) {
             setError('Uma coluna com o nome ' + newColumn + ' ja existe na tabela, tente outro nome')
             return;
         }
@@ -291,6 +310,7 @@ function InventoryTable() {
         const updatedInventory = new Map(inventory);
         updatedInventory.set("Coluna nova..", []);
 
+        updateColumnChanges(updatedInventory);
         setInventory(updatedInventory);
     };
 
@@ -299,6 +319,7 @@ function InventoryTable() {
         updatedInventory.delete(column);
         //Adicionar Dialog para avisar que os itens dessa coluna serão excluídas
 
+        updateColumnChanges(updatedInventory);
         setInventory(updatedInventory);
     }
 

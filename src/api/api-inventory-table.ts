@@ -3,6 +3,7 @@ import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-
 import { InventoryTableType } from "@/types/api-response-types/inventory-table/inventory-table-type";
 import { ApiResponse } from "@/types/api-response-types/api-response";
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-request-type";
+import { UpdateInventoryTableWithoutMovementEventRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-without-movement-event-request-type";
 
 export const postMigrateExcelToInventoryTable = async (companyId: string, file: FormData): Promise<ApiResponse<InventoryTableType>> => {
     const data = await api.post<ApiResponse<InventoryTableType>>('/InventoryTable/migrate-table/' + companyId, file, {
@@ -60,6 +61,16 @@ export const putUpdateInventoryTableItems = async (request: UpdateInventoryTable
         currentValue: request.CurrentValue,
         items: request.Items
     })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => error);
+
+    return data;
+}
+
+export const putUpdateInventoryTableItemsWithoutMovementEvent = async (request: UpdateInventoryTableWithoutMovementEventRequestType): Promise<ApiResponse<InventoryTableType>> => {
+    const data = await api.put<ApiResponse<InventoryTableType>>('/InventoryTable/without-movement-event/' + request.id, request)
         .then((response) => {
             return response.data;
         })
