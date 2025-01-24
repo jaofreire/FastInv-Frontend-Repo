@@ -1,8 +1,9 @@
-import { deleteInventoryTable, fetchInventoryTableById, fetchInventoryTablesByCompanyId, patchUpdateInventoryTableName, postMigrateExcelToInventoryTable, postNewInventoryTable, putUpdateInventoryTableItems, putUpdateInventoryTableItemsWithoutMovementEvent } from "@/api/api-inventory-table"
+import { deleteInventoryTable, fetchExportInventoryTable, fetchInventoryTableById, fetchInventoryTablesByCompanyId, patchUpdateInventoryTableName, postMigrateExcelToInventoryTable, postNewInventoryTable, putUpdateInventoryTableItems, putUpdateInventoryTableItemsWithoutMovementEvent } from "@/api/api-inventory-table"
 import inventoryTableErrorMessages from "@/errors/api-response-error-messages/inventory-table-error-messages";
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-request-type";
 import { UpdateInventoryTableWithoutMovementEventRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-without-movement-event-request-type";
 import { ApiResponse } from "@/types/api-response-types/api-response";
+import { ExportedInventoryTableFileType } from "@/types/api-response-types/inventory-table/exported-inventory-table-file-type";
 import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table/inventory-table-summary-type"
 import { InventoryTableType } from "@/types/api-response-types/inventory-table/inventory-table-type";
 
@@ -26,6 +27,18 @@ export const registerNewInventoryTable = async (companyId: string, name: string)
     }
 
     return apiResponse;
+}
+
+export const exportToExcel = async (id: string): Promise<ApiResponse<string>> => {
+    const apiResponse = await fetchExportInventoryTable(id);
+
+    if (apiResponse.isSuccess === false) {
+        apiResponse.message = inventoryTableErrorMessages[apiResponse.message] || 'Ocorreu algum erro inesperado, por favor tente novamente'
+        return apiResponse;
+    }
+
+    return apiResponse;
+
 }
 
 export const getInventoryTablesByCompanyId = async (companyId: string): Promise<ApiResponse<InventoryTabelSummaryType>> => {
