@@ -53,6 +53,7 @@ function MyTables() {
         
         if(response.isSuccess === false){
             setError(response.message);
+            return;
         }
 
         window.location.reload();
