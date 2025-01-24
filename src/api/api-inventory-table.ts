@@ -4,7 +4,6 @@ import { InventoryTableType } from "@/types/api-response-types/inventory-table/i
 import { ApiResponse } from "@/types/api-response-types/api-response";
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-request-type";
 import { UpdateInventoryTableWithoutMovementEventRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-without-movement-event-request-type";
-import { ExportedInventoryTableFileType } from "@/types/api-response-types/inventory-table/exported-inventory-table-file-type";
 
 export const postMigrateExcelToInventoryTable = async (companyId: string, file: FormData): Promise<ApiResponse<InventoryTableType>> => {
     const data = await api.post<ApiResponse<InventoryTableType>>('/InventoryTable/migrate-table/' + companyId, file, {

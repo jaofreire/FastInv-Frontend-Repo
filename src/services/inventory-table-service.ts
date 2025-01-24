@@ -3,7 +3,6 @@ import inventoryTableErrorMessages from "@/errors/api-response-error-messages/in
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-request-type";
 import { UpdateInventoryTableWithoutMovementEventRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-without-movement-event-request-type";
 import { ApiResponse } from "@/types/api-response-types/api-response";
-import { ExportedInventoryTableFileType } from "@/types/api-response-types/inventory-table/exported-inventory-table-file-type";
 import { InventoryTabelSummaryType } from "@/types/api-response-types/inventory-table/inventory-table-summary-type"
 import { InventoryTableType } from "@/types/api-response-types/inventory-table/inventory-table-type";
 
