@@ -32,6 +32,16 @@ export const postNewInventoryTable = async (companyId: string, name: string): Pr
     return data;
 }
 
+export const fetchExportInventoryTable = async (id: string): Promise<ApiResponse<string>> => {
+    var data = await api.get<ApiResponse<string>>('/InventoryTable/export-excel/' + id)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => error);
+
+    return data;
+}
+
 export const fetchInventoryTablesByCompanyId = async (companyId: string): Promise<ApiResponse<InventoryTabelSummaryType>> => {
     var data = await api.get<ApiResponse<InventoryTabelSummaryType>>('/InventoryTable/company/' + companyId)
         .then((response) => {

@@ -16,12 +16,13 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ColumnOptions from "@/components/inventory-table/column-options";
 import { useNavigate, useParams } from "react-router-dom";
-import { getInventoryTableById, removeInventoryTable, updateInventoryTableItems, updateInventoryTableItemsWithoutMovementEvent, updateInventoryTableName } from "@/services/inventory-table-service";
+import { exportToExcel, getInventoryTableById, removeInventoryTable, updateInventoryTableItems, updateInventoryTableItemsWithoutMovementEvent, updateInventoryTableName } from "@/services/inventory-table-service";
 import { UpdateInventoryTableRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-request-type";
 import RemoveTableAlertDialog from "@/components/inventory-table/remove-table-alert-dialog";
 import UpdateTableNameDialog from "@/components/inventory-table/update-table-name-dialog";
 import ErrorDialog from "@/components/Global/errors/error-dialog";
 import { UpdateInventoryTableWithoutMovementEventRequestType } from "@/types/api-request-types/inventory-table/update-inventory-table-without-movement-event-request-type";
+import { downloadExcel } from "@/utils/download-files-handler";
 
 function InventoryTable() {
     const { tableName, id } = useParams();
@@ -70,6 +71,19 @@ function InventoryTable() {
     const [editingColumn, setEditingColumn] = useState({ column: null });
 
     //#region Chamadas para API
+
+    async function exportTableToExcel(){
+        if(id && tableName){
+            const apiResponse = await exportToExcel(id);
+            
+            if(apiResponse.isSuccess === false){
+                setError(apiResponse.message);
+                return;
+            }
+
+            downloadExcel(apiResponse.response, tableName + '.xlsx');
+        }
+    }
 
     async function updateItems(inventoryRequest: Map<string, string[]> | null = null) {
 
@@ -460,7 +474,7 @@ function InventoryTable() {
                                             />
                                         </div>
                                     </div>
-                                    <Button className="w-40 h-5 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500"><ClipboardPaste />Exportar excel</Button>
+                                    <Button className="w-40 h-5 bg-orange-500 opacity-90 text-black font-semibold hover:opacity-100 hover:bg-orange-500" onClick={exportTableToExcel}><ClipboardPaste />Exportar excel</Button>
                                     {isFilterMode && <Button className="w-40 h-5 bg-red-500 opacity-90 text-white font-medium rounded-sm hover:opacity-100 hover:bg-red-600" onClick={removeFilters}><FilterX />Remover filtros</Button>}
                                 </CardHeader>
                                 <CardContent className="overflow-x-auto">
