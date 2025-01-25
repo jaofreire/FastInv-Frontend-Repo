@@ -12,6 +12,7 @@ import UserProfile from './screens/user-profile.tsx'
 import AllUsers from './screens/all-users.tsx'
 import SignUpCompany from './screens/sign-up-company.tsx'
 import CompanyInformation from './screens/company-information.tsx'
+import { Analytics } from '@vercel/analytics/react';
 
 createRoot(document.getElementById('root')!).render(
   <AuthProvider>
@@ -57,6 +58,9 @@ createRoot(document.getElementById('root')!).render(
 
         } />
       </Routes>
+      {import.meta.env.VITE_ADD_ANALYTICS === 'true' && (
+        <Analytics />
+      )}
     </BrowserRouter >
   </AuthProvider>
 )
