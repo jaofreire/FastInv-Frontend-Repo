@@ -87,7 +87,7 @@ function InventoryTable() {
 
     async function updateItems(inventoryRequest: Map<string, string[]> | null = null) {
 
-        if (columnEdited === '' || previousValue === '' || currentValue === '') {
+        if (columnEdited === '' || currentValue === '') {
             return;
         }
 
