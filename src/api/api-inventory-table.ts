@@ -67,7 +67,7 @@ export const putUpdateInventoryTableItems = async (request: UpdateInventoryTable
         id: request.Id,
         name: request.Name,
         columnChanged: request.ColumnChanged,
-        previousValue: request.PreviousValue,
+        previousValue: request.PreviousValue ?? 'Vazio',
         currentValue: request.CurrentValue,
         items: request.Items
     })
